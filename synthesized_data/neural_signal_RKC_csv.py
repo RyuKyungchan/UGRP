@@ -106,14 +106,20 @@ file_path_sine_wave_npy = os.path.join(script_dir, 'data_sine_wave.npy')
 file_path_signal_with_sine_npy = os.path.join(script_dir, 'data_signal_with_sine.npy')
 
 # Save DataFrames to CSV files
-data_signal.to_csv(file_path_signal_csv, index=False)
-print(f'DataFrame (signal) has been saved to {file_path_signal_csv}')
+file_path1 = '../data/DNN_data/simulatesignal.csv'
+# os.makedirs(os.path.dirname(file_path1), exist_ok=True)
+data_signal.to_csv(file_path1, index=False)
+print(f'DataFrame (signal) has been saved to {file_path1}')
 
-data_sine_wave.to_csv(file_path_sine_wave_csv, index=False)
-print(f'DataFrame (signal) has been saved to {file_path_sine_wave_csv}')
+file_path2 = '../data/DNN_data/sine_wave.csv'
+# os.makedirs(os.path.dirname(file_path2), exist_ok=True)
+data_signal.to_csv(file_path2, index=False)
+print(f'DataFrame (signal) has been saved to {file_path2}')
 
-data_signal_with_sine.to_csv(file_path_signal_with_sine_csv, index=False)
-print(f'DataFrame (signal_with_sine) has been saved to {file_path_signal_with_sine_csv}')
+file_path3 = '../data/DNN_data/simulatesignalwithartifact.csv'
+# os.makedirs(os.path.dirname(file_path3), exist_ok=True)
+data_signal.to_csv(file_path3, index=False)
+print(f'DataFrame (signal_with_sine) has been saved to {file_path3}')
 
 # # Save arrays to NPY files
 # np.save(file_path_signal_npy, data_signal.to_numpy())
