@@ -18,6 +18,15 @@ def Data_Load_Plot(datapath):
 
     t = np.linspace(0, 2, num=4000) 
 
+    # Plot All in One
+    plt.figure(figsize=(20, 3))
+    plt.plot(t, artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.7)
+    plt.plot(t, sig_with_artifact[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
+    plt.plot(t, sig[0], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
+    plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
+    plt.legend()
+    plt.show()
+
     # Plot [Contaminated / Artifact / Clean]
     plt.figure(figsize=(20,9))
     plt.subplot(3, 1, 1)
@@ -56,15 +65,6 @@ def Data_Load_Plot(datapath):
     plt.title('Clean Signal')
 
     plt.tight_layout()
-    plt.show()
-
-    # Plot All in One
-    plt.figure(figsize=(20, 3))
-    plt.plot(t, artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.7)
-    plt.plot(t, sig_with_artifact[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
-    plt.plot(t, sig[0], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
-    plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
-    plt.legend()
     plt.show()
 
     return sig_with_artifact, sig, artifact
