@@ -69,11 +69,11 @@ def Data_Load_Plot(datapath):
 
     return sig_with_artifact, sig, artifact
 
-def Result_Plot(Contaminated_signal, Clean_signal, SACed_signal):
+def Result_Plot(Contaminated, SACed, Clean):
 
     """
     모델의 결과를 plot하는 함수
-    parameter: Contaminated_signal, SACed_signal, Clean_signal
+    parameter: [Contaminated, SACed_signal, Clean] data
     return: None
     """
 
@@ -82,10 +82,16 @@ def Result_Plot(Contaminated_signal, Clean_signal, SACed_signal):
     from sklearn.metrics import mean_absolute_error
     from sklearn.metrics import mean_squared_error
 
+
+
     ### Time domain Plotting ###
     print("<Time Domain Error>")
-    print(f"Mean Absolute Error: {mean_absolute_error(Clean_signal, SACed_signal)}")
-    print(f"Mean Squared Error: {mean_squared_error(Clean_signal, SACed_signal)}")
+    print(f"Mean Absolute Error: {mean_absolute_error(SACed, Clean)}")
+    print(f"Mean Squared Error: {mean_squared_error(SACed, Clean)}")
+
+    Contaminated_signal = Contaminated[0]
+    SACed_signal = SACed[0]
+    Clean_signal = Clean[0]
 
     t = np.linspace(0, 2, num=4000)
 
@@ -136,37 +142,46 @@ def Result_Plot(Contaminated_signal, Clean_signal, SACed_signal):
     plt.show()
 
 
-    ### Frequency domain Plottig ###    
+    ### Frequency domain Plottig ###  
     n = len(SACed_signal)
 
     fs = 2000
     freqs = np.fft.fftfreq(n, d=1/fs)[:n//2]
 
-    fft_predicted = np.fft.fft(SACed_signal)
-    fft_predicted = np.abs(fft_predicted[:n//2])
-    fft_predicted[1:] = 2 * fft_predicted[1:]
-    power_predicted = fft_predicted**2
+    def fft_func(signal):
+        n = len(signal)
+        fs = 2000
 
-    fft_actual = np.fft.fft(Clean_signal)
-    fft_actual = np.abs(fft_actual[:n//2])
-    fft_actual[1:] = 2 * fft_actual[1:]
-    power_actual = fft_actual**2
+        fft_signal = np.fft.fft(signal)
+        fft_signal = np.abs(fft_signal[:n//2])
+        fft_signal[1:] = 2*fft_signal[1:]
+        power_signal = fft_signal**2
 
-    fft_nonSACed = np.fft.fft(Contaminated_signal)
-    fft_nonSACed = np.abs(fft_nonSACed[:n//2])
-    fft_nonSACed[1:] = 2 * fft_nonSACed[1:]
-    power_nonSACed = fft_nonSACed**2
+        return np.log10(power_signal)
+
+    power_Contaminated = np.array([freqs])
+    power_SACed = np.array([freqs])
+    power_Clean = np.array([freqs])
+
+    for x, y_pred, y in zip(Contaminated, SACed, Clean):
+        power_Contaminated = np.vstack((power_Contaminated, fft_func(x)))
+        power_SACed = np.vstack((power_SACed, fft_func(y_pred)))
+        power_Clean = np.vstack((power_Clean, fft_func(y)))
+
+    power_Contaminated = np.delete(power_Contaminated, 0, axis=0)
+    power_SACed = np.delete(power_SACed, 0, axis=0)
+    power_Clean = np.delete(power_Clean, 0, axis=0)
 
     # Frequency MAE / MSE
     print("<Frequency Domain Error>")
-    print(f"Mean Absolute Error: {mean_absolute_error(np.log10(power_predicted), np.log10(power_actual))}")
-    print(f"Mean Squared Error: {mean_squared_error(np.log10(power_predicted), np.log10(power_actual))}")
+    print(f"Mean Absolute Error: {mean_absolute_error(power_SACed, power_Clean)}")
+    print(f"Mean Squared Error: {mean_squared_error(power_SACed, power_Clean)}")
 
     # 결과 플로팅
     plt.figure(figsize=(10, 6))
-    plt.plot(freqs[1:600], np.log10(power_nonSACed)[1:600], label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
-    plt.plot(freqs[1:600], np.log10(power_actual)[1:600], label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
-    plt.plot(freqs[1:600], np.log10(power_predicted)[1:600], label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], power_Contaminated[0][1:600], label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], power_Clean[0][1:600], label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], power_SACed[0][1:600], label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
     plt.title('Power Spectrum of Predicted and Actual Signals')
     plt.xlabel('Frequency [Hz]')
     plt.ylabel('Power')
