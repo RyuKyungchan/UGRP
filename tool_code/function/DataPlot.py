@@ -35,7 +35,7 @@ def Data_Load_Plot(datapath):
     plt.title('Contaminated Signal')
 
     plt.subplot(3, 1, 2)
-    plt.plot(t, artifact[0], color='darkorange')
+    plt.plot(t, artifact[0], color='tomato')
     plt.xlabel("Time (seconds)")
     plt.title('Artifact Signal')
 
@@ -67,7 +67,53 @@ def Data_Load_Plot(datapath):
     plt.tight_layout()
     plt.show()
 
+    # power spectrum으로 변환
+    n = len(sig_with_artifact[0])
+
+    fs = 2000
+    freqs = np.fft.rfftfreq(n, d=1/fs)
+
+    fft_contaminated = np.fft.rfft(sig_with_artifact, axis=1)
+    power_contaminated = np.abs(fft_contaminated)**2
+
+    fft_clean = np.fft.rfft(sig, axis=1)
+    power_clean = np.abs(fft_clean)**2
+
+    plt.figure(figsize=(10, 7))
+    plt.plot(freqs[1:], np.log10(power_contaminated[0][1:]), label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
+    plt.plot(freqs[1:], np.log10(power_clean[0][1:]), label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
+    plt.xlabel('Frequency [Hz]')
+    plt.ylabel('Amplitude')
+    plt.title('Contaminated vs Clean Signal')
+    plt.legend()
+    plt.show()
+
     return sig_with_artifact, sig, artifact
+
+def Train_Loss_Plot(loss_list):
+
+    """
+    Train Loss의 진행과정을 Plot하는 함수
+    parameter: loss_list
+    return: None
+    """
+
+    import matplotlib.pyplot as plt
+
+    # train loss plot
+    plt.figure(figsize=(20, 3))
+    plt.plot(loss_list)
+    plt.xlabel('Epoch')
+    plt.ylabel('Train Loss')
+    plt.title("Train Loss")
+    plt.show()
+
+    min_index, min_value = 0, 1
+    for idx, val in enumerate(loss_list):
+        if val < min_value:
+            min_index = idx
+            min_value = val
+    print("Minimal Train Loss:", min_value, f"[{min_index}]\n")
 
 def Result_Plot(Contaminated, SACed, Clean):
 
