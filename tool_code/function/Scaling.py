@@ -1,4 +1,14 @@
 
+def time_scaling(Contaminated_data, Clean_data):
+
+    """
+    Time domain에서 StandardScaler transform하는 함수
+    parameter: Contaminated_data, Clean_data
+    return: scaled_Contaminated_data, scaled_Clean_data
+    """
+
+    
+
 def time_inv_scaling(Contaminated, SACed, Clean, scaler_x, scaler_y):
 
     """
