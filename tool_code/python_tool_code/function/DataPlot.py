@@ -193,14 +193,13 @@ def Result_Plot(Contaminated, SACed, Clean):
     sys.path.append('C:/Users/User/Documents/GitHub/UGRP/tool_code/python_tool_code/frequency_dataset_generation/')
 
     from FFT_func import FFT
-    
-    n = len(SACed_signal)
-    freqs = np.fft.rfftfreq(n, d=1/fs)
-    _, power_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
-    _, power_Clean = FFT(Clean, fs=2000, single_sided=True)
-    _, power_SACed = FFT(SACed, fs=2000, single_sided=True)
-    
 
+    freqs, _, _, power_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, power_Clean = FFT(Clean, fs=2000, single_sided=True)
+    _, _, _, power_SACed = FFT(SACed, fs=2000, single_sided=True)
+
+    print(freqs.shape)
+    print(power_Contaminated.shape)
 
     # fs = 2000
     # freqs = np.fft.fftfreq(n, d=1/fs)[:n//2]
@@ -236,9 +235,9 @@ def Result_Plot(Contaminated, SACed, Clean):
 
     # 결과 플로팅
     plt.figure(figsize=(10, 6))
-    plt.plot(freqs[1:600], power_Contaminated[0][1:600], label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
-    plt.plot(freqs[1:600], power_Clean[0][1:600], label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
-    plt.plot(freqs[1:600], power_SACed[0][1:600], label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], np.log10(power_Contaminated[0][1:600]), label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], np.log10(power_Clean[0][1:600]), label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], np.log10(power_SACed[0][1:600]), label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
     plt.title('Power Spectrum of Predicted and Actual Signals')
     plt.xlabel('Frequency [Hz]')
     plt.ylabel('Power')

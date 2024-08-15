@@ -91,7 +91,7 @@ class PARRM:
     _artefact_freq = None
     _verbose = None
 
-    _period = None
+    _period = 16.0000
     _search_samples = None
     _assumed_periods = None
     _outlier_boundary = None

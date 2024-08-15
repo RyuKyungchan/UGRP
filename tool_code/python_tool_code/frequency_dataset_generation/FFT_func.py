@@ -2,7 +2,7 @@ def FFT(signal, fs=2000, single_sided=True):
     
     import numpy as np
 
-    N = len(signal)
+    N = len(signal[0])
     
     if single_sided:
         freqs = np.fft.rfftfreq(N, d=1/fs)
