@@ -189,45 +189,55 @@ def Result_Plot(Contaminated, SACed, Clean):
 
 
     ### Frequency domain Plottig ###  
-    n = len(SACed_signal)
+    import sys
+    sys.path.append('C:/Users/User/Documents/GitHub/UGRP/tool_code/python_tool_code/frequency_dataset_generation/')
 
-    fs = 2000
-    freqs = np.fft.fftfreq(n, d=1/fs)[:n//2]
+    from FFT_func import FFT
 
-    def fft_func(signal):
-        n = len(signal)
-        fs = 2000
+    freqs, _, _, power_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, power_Clean = FFT(Clean, fs=2000, single_sided=True)
+    _, _, _, power_SACed = FFT(SACed, fs=2000, single_sided=True)
 
-        fft_signal = np.fft.fft(signal)
-        fft_signal = np.abs(fft_signal[:n//2])
-        fft_signal[1:] = 2*fft_signal[1:]
-        power_signal = fft_signal**2
+    print(freqs.shape)
+    print(power_Contaminated.shape)
 
-        return np.log10(power_signal)
+    # fs = 2000
+    # freqs = np.fft.fftfreq(n, d=1/fs)[:n//2]
 
-    power_Contaminated = np.array([freqs])
-    power_SACed = np.array([freqs])
-    power_Clean = np.array([freqs])
+    # def fft_func(signal):
+    #     n = len(signal)
+    #     fs = 2000
 
-    for x, y_pred, y in zip(Contaminated, SACed, Clean):
-        power_Contaminated = np.vstack((power_Contaminated, fft_func(x)))
-        power_SACed = np.vstack((power_SACed, fft_func(y_pred)))
-        power_Clean = np.vstack((power_Clean, fft_func(y)))
+    #     fft_signal = np.fft.fft(signal)
+    #     fft_signal = np.abs(fft_signal[:n//2])
+    #     fft_signal[1:] = 2*fft_signal[1:]
+    #     power_signal = fft_signal**2
 
-    power_Contaminated = np.delete(power_Contaminated, 0, axis=0)
-    power_SACed = np.delete(power_SACed, 0, axis=0)
-    power_Clean = np.delete(power_Clean, 0, axis=0)
+    #     return np.log10(power_signal)
+
+    # power_Contaminated = np.array([freqs])
+    # power_SACed = np.array([freqs])
+    # power_Clean = np.array([freqs])
+
+    # for x, y_pred, y in zip(Contaminated, SACed, Clean):
+    #     power_Contaminated = np.vstack((power_Contaminated, fft_func(x)))
+    #     power_SACed = np.vstack((power_SACed, fft_func(y_pred)))
+    #     power_Clean = np.vstack((power_Clean, fft_func(y)))
+
+    # power_Contaminated = np.delete(power_Contaminated, 0, axis=0)
+    # power_SACed = np.delete(power_SACed, 0, axis=0)
+    # power_Clean = np.delete(power_Clean, 0, axis=0)
 
     # Frequency MAE / MSE
-    print("<Frequency Domain Error>")
-    print(f"Mean Absolute Error: {mean_absolute_error(power_SACed, power_Clean)}")
-    print(f"Mean Squared Error: {mean_squared_error(power_SACed, power_Clean)}")
+    # print("<Frequency Domain Error>")
+    # print(f"Mean Absolute Error: {mean_absolute_error(power_SACed, power_Clean)}")
+    # print(f"Mean Squared Error: {mean_squared_error(power_SACed, power_Clean)}")
 
     # 결과 플로팅
     plt.figure(figsize=(10, 6))
-    plt.plot(freqs[1:600], power_Contaminated[0][1:600], label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
-    plt.plot(freqs[1:600], power_Clean[0][1:600], label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
-    plt.plot(freqs[1:600], power_SACed[0][1:600], label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], np.log10(power_Contaminated[0][1:600]), label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], np.log10(power_Clean[0][1:600]), label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
+    plt.plot(freqs[1:600], np.log10(power_SACed[0][1:600]), label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
     plt.title('Power Spectrum of Predicted and Actual Signals')
     plt.xlabel('Frequency [Hz]')
     plt.ylabel('Power')
