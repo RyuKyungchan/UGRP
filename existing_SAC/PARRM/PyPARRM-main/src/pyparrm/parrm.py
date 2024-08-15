@@ -7,6 +7,8 @@ from copy import deepcopy
 from multiprocessing import cpu_count
 
 import numpy as np
+import cupy as cp
+
 from pqdm.threads import pqdm
 from scipy.optimize import fmin
 from scipy.signal import convolve  # faster than convolve2d
@@ -14,7 +16,7 @@ from scipy.signal import convolve  # faster than convolve2d
 from pyparrm._utils._plotting import _ExploreParams
 
 
-np.seterr(all="ignore")  # ignore zero division error
+# np.seterr(all="ignore")  # ignore zero division error
 
 
 class PARRM:
