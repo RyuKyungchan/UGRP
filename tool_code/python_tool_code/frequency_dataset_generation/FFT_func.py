@@ -1,7 +1,9 @@
 def FFT(data, fs=2000, single_sided=True):
     
     import numpy as np
-
+    
+    if data.ndim == 1:
+        data = np.expand_dims(data, axis=0)  # (4000,) -> (1, 4000)
     N = len(data[0])
     
     if single_sided:

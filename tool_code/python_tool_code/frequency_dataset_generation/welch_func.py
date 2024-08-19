@@ -3,11 +3,11 @@ def Welch(data, fs=2000, nperseg=512, same=True):
     from scipy.interpolate import interp1d
     import numpy as np
 
+    if data.ndim == 1:
+        data = np.expand_dims(data, axis=0)  # (4000,) -> (1, 4000)
+        
     results = [welch(data[i], fs, nperseg=nperseg) for i in range(len(data))]
-    freqs, psd = map(np.array, zip(*results))
-
-    # psd의 shape 확인
-    original_shape = psd.shape  # (1000, 257) 같은 형태
+    freqs, psd = map(np.array, zip(*results)) # psd.shape = (1000, 257) 같은 형태
     
     if same:
         # 기존 주파수 범위를 유지하면서 4000개의 포인트로 확장
