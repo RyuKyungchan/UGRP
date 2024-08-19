@@ -1,12 +1,12 @@
-def FFT(signal, fs=2000, single_sided=True):
+def FFT(data, fs=2000, single_sided=True):
     
     import numpy as np
 
-    N = len(signal[0])
+    N = len(data[0])
     
     if single_sided:
         freqs = np.fft.rfftfreq(N, d=1/fs)
-        fft_result = np.fft.rfft(signal)
+        fft_result = np.fft.rfft(data)
         amplitude_spectrum = np.abs(fft_result)
         power_spectrum = amplitude_spectrum ** 2
         
@@ -19,7 +19,7 @@ def FFT(signal, fs=2000, single_sided=True):
     
     else:
         freqs = np.fft.fftshift(np.fft.fftfreq(N, 1/fs))
-        fft_result = np.fft.fft(signal)
+        fft_result = np.fft.fft(data)
         amplitude_spectrum = np.fft.fftshift(np.abs(fft_result))
         power_spectrum = amplitude_spectrum ** 2
         
