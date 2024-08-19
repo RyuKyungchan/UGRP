@@ -9,20 +9,20 @@ def Data_Load_Plot(datapath):
     import numpy as np
     import matplotlib.pyplot as plt
 
-    sig_with_artifact = np.load(datapath + "data_with_non_sine_v2_varying" + ".npy")
-    sig = np.load(datapath + "data_signal" + ".npy")
-    artifact = sig_with_artifact - sig
+    Contaminated = np.load(datapath + "contaminated_by_realistic" + ".npy")
+    Clean = np.load(datapath + "clean_data" + ".npy")
+    Artifact = Contaminated - Clean
 
-    print("Contaminated_data.shape:", sig_with_artifact.shape)
-    print("Clean_data.shape:", sig.shape)
+    print("Contaminated_data.shape:", Contaminated.shape)
+    print("Clean_data.shape:", Clean.shape)
 
     t = np.linspace(0, 2, num=4000) 
 
     # Plot All in One
     plt.figure(figsize=(20, 3))
-    plt.plot(t, artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.7)
-    plt.plot(t, sig_with_artifact[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
-    plt.plot(t, sig[0], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
+    plt.plot(t, Artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.7)
+    plt.plot(t, Contaminated[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
+    plt.plot(t, Clean[0], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
     plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
     plt.legend()
     plt.show()
@@ -30,17 +30,17 @@ def Data_Load_Plot(datapath):
     # Plot [Contaminated / Artifact / Clean]
     plt.figure(figsize=(20,9))
     plt.subplot(3, 1, 1)
-    plt.plot(t, sig_with_artifact[0], color='orange')
+    plt.plot(t, Contaminated[0], color='orange')
     plt.xlabel("Time (seconds)")
     plt.title('Contaminated Signal')
 
     plt.subplot(3, 1, 2)
-    plt.plot(t, artifact[0], color='tomato')
+    plt.plot(t, Artifact[0], color='tomato')
     plt.xlabel("Time (seconds)")
     plt.title('Artifact Signal')
 
     plt.subplot(3, 1, 3)
-    plt.plot(t, sig[0], color='dodgerblue')
+    plt.plot(t, Clean[0], color='dodgerblue')
     plt.xlabel("Time (seconds)")
     plt.title('Clean Signal')
 
@@ -50,45 +50,44 @@ def Data_Load_Plot(datapath):
     # Plot Zoom-In [Contaminated / Artifact / Clean]
     plt.figure(figsize=(20,8))
     plt.subplot(3, 1, 1)
-    plt.plot(t[:200], sig_with_artifact[0][:200], color='orange')
+    plt.plot(t[:200], Contaminated[0][:200], color='orange')
     plt.xlabel("Time (seconds)")
     plt.title('Contaminated Signal')
 
     plt.subplot(3, 1, 2)
-    plt.plot(t[:200], artifact[0][:200], color='tomato')
+    plt.plot(t[:200], Artifact[0][:200], color='tomato')
     plt.xlabel("Time (seconds)")
     plt.title('Artifact Signal')
 
     plt.subplot(3, 1, 3)
-    plt.plot(t[:200], sig[0][:200], color='dodgerblue')
+    plt.plot(t[:200], Clean[0][:200], color='dodgerblue')
     plt.xlabel("Time (seconds)")
     plt.title('Clean Signal')
 
     plt.tight_layout()
     plt.show()
 
-    # power spectrum으로 변환
-    n = len(sig_with_artifact[0])
+    ### Frequency domain Plottig ###  
+    import sys
+    sys.path.append('C:/Users/User/Documents/GitHub/UGRP/tool_code/python_tool_code/frequency_dataset_generation/')
+    from FFT_func import FFT
 
-    fs = 2000
-    freqs = np.fft.rfftfreq(n, d=1/fs)
+    freqs, _, _, Contaminated_psd = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, Clean_psd = FFT(Clean, fs=2000, single_sided=True)
 
-    fft_contaminated = np.fft.rfft(sig_with_artifact, axis=1)
-    power_contaminated = np.abs(fft_contaminated)**2
-
-    fft_clean = np.fft.rfft(sig, axis=1)
-    power_clean = np.abs(fft_clean)**2
+    print(freqs.shape)
+    print(Contaminated_psd.shape)
 
     plt.figure(figsize=(10, 7))
-    plt.plot(freqs[1:], np.log10(power_contaminated[0][1:]), label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
-    plt.plot(freqs[1:], np.log10(power_clean[0][1:]), label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
+    plt.plot(freqs[1:], np.log10(Contaminated_psd[0][1:]), label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
+    plt.plot(freqs[1:], np.log10(Clean_psd[0][1:]), label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
     plt.xlabel('Frequency [Hz]')
     plt.ylabel('Amplitude')
     plt.title('Contaminated vs Clean Signal')
     plt.legend()
     plt.show()
 
-    return sig_with_artifact, sig, artifact
+    return Contaminated, Clean, Artifact
 
 def Train_Loss_Plot(loss_list):
 

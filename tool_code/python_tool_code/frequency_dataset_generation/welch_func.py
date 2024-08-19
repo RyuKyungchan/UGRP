@@ -1,6 +1,7 @@
 def Welch(data, fs=2000, nperseg=512, same=True):
     from scipy.signal import welch
     from scipy.interpolate import interp1d
+    import numpy as np
 
     results = [welch(data[i], fs, nperseg=nperseg) for i in range(len(data))]
     freqs, psd = map(np.array, zip(*results))
