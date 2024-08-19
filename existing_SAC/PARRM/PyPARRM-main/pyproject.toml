@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyparrm"
+version = "1.1.1dev"
+authors = [
+    { name="Thomas Samuel Binns", email="t.s.binns@outlook.com" }
+]
+description = "A Python port of the PARRM algorithm"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib >= 3.7.1",
+    "pqdm >= 0.2.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "coverage",
+    "flake8",
+    "black",
+    "codespell",
+    "pycodestyle",
+    "pydocstyle",
+    "sphinx",
+    "numpydoc",
+    "sphinxcontrib-bibtex",
+    "sphinx-gallery",
+    "pydata-sphinx-theme",
+    "notebook",
+    "ipykernel",
+    "ipywidgets",
+    "ipython"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/neuromodulation/PyPARRM"
+"Bug Tracker" = "https://github.com/neuromodulation/PyPARRM/issues"
+
+[tool.coverage.run]
+omit = [
+    "tests/*",
+    "__init__.py",
+    "src/pyparrm/utils/_docs.py"
+]
+
+[tool.codespell]
+skip = "./docs/build,./docs/source/auto_examples,./docs/source/refs.bib,./.*"
+
+[tool.pydocstyle]
+match-dir = "^(?!(examples|docs|tests)).*"
