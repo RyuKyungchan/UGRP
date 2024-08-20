@@ -187,9 +187,6 @@ def Result_Plot(Contaminated, SACed, Clean):
     _, _, _, power_Clean = FFT(Clean, fs=2000, single_sided=True)
     _, _, _, power_SACed = FFT(SACed, fs=2000, single_sided=True)
 
-    print(freqs.shape)
-    print(power_Contaminated.shape)
-
     # fs = 2000
     # freqs = np.fft.fftfreq(n, d=1/fs)[:n//2]
 
