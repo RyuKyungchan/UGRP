@@ -85,10 +85,12 @@ def Data_Load_Plot(datapath):
 
     return Contaminated, Clean, Artifact
 
-def Train_Loss_Plot(loss_list):
+
+
+def Loss_Plot(loss_list):
 
     """
-    Train Loss의 진행과정을 Plot하는 함수
+    Train / Test Loss의 진행과정을 Plot하는 함수
     parameter: loss_list
     return: None
     """
@@ -99,8 +101,8 @@ def Train_Loss_Plot(loss_list):
     plt.figure(figsize=(20, 3))
     plt.plot(loss_list)
     plt.xlabel('Epoch')
-    plt.ylabel('Train Loss')
-    plt.title("Train Loss")
+    plt.ylabel('Loss')
+    plt.title("Loss / Epoch")
     plt.show()
 
     min_index, min_value = 0, 1
@@ -108,7 +110,9 @@ def Train_Loss_Plot(loss_list):
         if val < min_value:
             min_index = idx
             min_value = val
-    print("Minimal Train Loss:", min_value, f"[{min_index}]\n")
+    print("Minimal Loss:", min_value, f"[{min_index}]\n")
+
+
 
 def Result_Plot(Contaminated, SACed, Clean):
 
@@ -187,33 +191,6 @@ def Result_Plot(Contaminated, SACed, Clean):
     _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
     _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
 
-    # fs = 2000
-    # freqs = np.fft.fftfreq(n, d=1/fs)[:n//2]
-
-    # def fft_func(signal):
-    #     n = len(signal)
-    #     fs = 2000
-
-    #     fft_signal = np.fft.fft(signal)
-    #     fft_signal = np.abs(fft_signal[:n//2])
-    #     fft_signal[1:] = 2*fft_signal[1:]
-    #     power_signal = fft_signal**2
-
-    #     return np.log10(power_signal)
-
-    # power_Contaminated = np.array([freqs])
-    # power_SACed = np.array([freqs])
-    # power_Clean = np.array([freqs])
-
-    # for x, y_pred, y in zip(Contaminated, SACed, Clean):
-    #     power_Contaminated = np.vstack((power_Contaminated, fft_func(x)))
-    #     power_SACed = np.vstack((power_SACed, fft_func(y_pred)))
-    #     power_Clean = np.vstack((power_Clean, fft_func(y)))
-
-    # power_Contaminated = np.delete(power_Contaminated, 0, axis=0)
-    # power_SACed = np.delete(power_SACed, 0, axis=0)
-    # power_Clean = np.delete(power_Clean, 0, axis=0)
-
     # Frequency MAE / MSE
     print("<Frequency Domain Error>")
     print(f"Mean Absolute Error: {mean_absolute_error(psd_SACed, psd_Clean)}")
@@ -232,6 +209,8 @@ def Result_Plot(Contaminated, SACed, Clean):
     plt.axvline(x=130, color='black', linestyle='--',label='130 Hz', linewidth=0.7)
 
     return None
+
+
 
 def FFT(data, fs=2000, single_sided=True):
     
