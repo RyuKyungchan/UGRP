@@ -69,7 +69,7 @@ def Data_Load_Plot(datapath):
 
     ### Frequency domain Plottig ###  
     import sys
-    sys.path.append('C:/Users/User/Documents/GitHub/UGRP/tool_code/python_tool_code/frequency_dataset_generation/')
+    sys.path.append('../frequency_dataset_generation/')
     from FFT_func import FFT
 
     freqs, _, _, Contaminated_psd = FFT(Contaminated, fs=2000, single_sided=True)
@@ -189,7 +189,7 @@ def Result_Plot(Contaminated, SACed, Clean):
 
     ### Frequency domain Plottig ###  
     import sys
-    sys.path.append('C:/Users/User/Documents/GitHub/UGRP/tool_code/python_tool_code/frequency_dataset_generation/')
+    sys.path.append('../frequency_dataset_generation/')
 
     from FFT_func import FFT
 
