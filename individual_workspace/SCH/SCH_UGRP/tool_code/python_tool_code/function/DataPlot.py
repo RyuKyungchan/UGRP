@@ -19,6 +19,13 @@ def Data_Load_Plot(datapath):
     t = np.linspace(0, 2, num=4000) 
 
     # Plot All in One
+    plt.figure(figsize=(7, 2))
+    plt.plot(t[:len(t)//2], Artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.5)
+    plt.plot(t, Contaminated[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.5)
+    plt.plot(t, Clean[0], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.5)
+    plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
+    plt.legend()
+    plt.show()
     plt.figure(figsize=(20, 3))
     plt.plot(t, Artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.7)
     plt.plot(t, Contaminated[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
@@ -112,6 +119,60 @@ def Loss_Plot(loss_list):
             min_value = val
     print("Minimal Loss:", min_value, f"[{min_index}]\n")
 
+def Result_Plot_v2(Contaminated, SACed, Clean):
+    t = np.linspace(0, 2, num=4000) 
+    start_time = 1; # [sec]
+    end_time = 2; # [sec]
+    start_pts = start_time*fs
+    end_pts = end_time*fs
+    times = np.arange(end_pts - start_pts) / fs
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    inset_axis = axes[0].inset_axes((0.12, 0.6, 0.5, 0.35))
+
+    # main timeseries plot
+    axes[0].plot(
+        times, data[0, start_pts:end_pts], color="black", alpha=0.3, label="Unfiltered"
+    )
+    axes[0].plot(
+        times, artefact_free[0, start_pts:end_pts], linewidth=3, label="Artefact-free"
+    )
+    axes[0].plot(times, filtered_data[0, start_pts:end_pts], label="Filtered (PyPARRM)")
+    axes[0].legend()
+    axes[0].set_xlabel("Time (s)")
+    axes[0].set_ylabel("Amplitude (mV)")
+
+    # timeseries inset plot
+    inset_axis.plot(times[:50], artefact_free[0, start_pts : start_pts + 50], linewidth=3)
+    inset_axis.plot(times[:50], filtered_data[0, start_pts : start_pts + 50])
+    axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.4)
+    inset_axis.patch.set_alpha(0.7)
+
+    # power spectral density plot
+    n_freqs = fs / 2
+    psd_freqs, psd_raw = compute_psd(
+        data[0, start_pts:end_pts], fs, int(n_freqs * 2)
+    )
+    _, psd_filtered = compute_psd(
+        filtered_data[0, start_pts:end_pts], fs, int(n_freqs * 2)
+    )
+    _, psd_artefact_free = compute_psd(
+        artefact_free[0, start_pts:end_pts], fs, int(n_freqs * 2)
+    )
+
+    axes[1].loglog(
+        psd_freqs, psd_raw, color="black", alpha=0.3, label="Unfiltered"
+    )
+    axes[1].loglog(
+        psd_freqs, psd_artefact_free, linewidth=3, label="Artefact-free"
+    )
+    axes[1].loglog(psd_freqs, psd_filtered, label="Filtered (PyPARRM)")
+    axes[1].legend()
+    axes[1].set_xlabel("Log frequency (Hz)")
+    axes[1].set_ylabel("Log power (dB/Hz)")
+
+    fig.tight_layout()
+    fig.show()
 
 
 def Result_Plot(Contaminated, SACed, Clean):
