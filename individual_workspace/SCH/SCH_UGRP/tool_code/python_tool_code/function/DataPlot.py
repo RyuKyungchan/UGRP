@@ -17,14 +17,19 @@ def Data_Load_Plot(datapath):
     print("Clean_data.shape:", Clean.shape)
 
     t = np.linspace(0, 2, num=4000) 
+    start_time = 1; # [sec]
+    end_time = 2; # [sec]
+    fs = 2000
+    start_pts = start_time*fs
+    end_pts = end_time*fs
 
     # Plot All in One
-    plt.figure(figsize=(7, 2))
-    plt.plot(t[:len(t)//2], Artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.5)
-    plt.plot(t, Contaminated[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.5)
-    plt.plot(t, Clean[0], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.5)
+    plt.figure(figsize=(8, 3))
+    plt.plot(t[start_pts:end_pts], Artifact[0][start_pts:end_pts], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.5)
+    plt.plot(t[start_pts:end_pts], Contaminated[0][start_pts:end_pts], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.5)
+    plt.plot(t[start_pts:end_pts], Clean[0][start_pts:end_pts], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.5)
     plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
-    plt.legend()
+    plt.legend(prop={'size': 10}, loc='lower left')
     plt.show()
     plt.figure(figsize=(20, 3))
     plt.plot(t, Artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.7)
