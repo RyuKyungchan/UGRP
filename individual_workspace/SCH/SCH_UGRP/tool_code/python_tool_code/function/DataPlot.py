@@ -16,85 +16,101 @@ def Data_Load_Plot(datapath):
     print("Contaminated_data.shape:", Contaminated.shape)
     print("Clean_data.shape:", Clean.shape)
 
+    ### Plot all in one ###
+
     t = np.linspace(0, 2, num=4000) 
     start_time = 1; # [sec]
-    end_time = 2; # [sec]
+    end_time = 1.5; # [sec]
     fs = 2000
-    start_pts = start_time*fs
-    end_pts = end_time*fs
+    start_pts = int(start_time*fs)
+    end_pts = int(end_time*fs)
 
-    # Plot All in One
-    plt.figure(figsize=(8, 3))
-    plt.plot(t[start_pts:end_pts], Artifact[0][start_pts:end_pts], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.5)
-    plt.plot(t[start_pts:end_pts], Contaminated[0][start_pts:end_pts], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.5)
-    plt.plot(t[start_pts:end_pts], Clean[0][start_pts:end_pts], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.5)
-    plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
-    plt.legend(prop={'size': 10}, loc='lower left')
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    ### Time domain Plotting ###
+
+    # main timeseries plot
+    axes[0].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="orange", alpha=1, linewidth=1)
+    axes[0].plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
+    axes[0].legend(prop={'size': 10}, loc='lower left')
+    axes[0].set_xlabel("Time (s)"); axes[0].set_ylabel("Amplitude (mV)")
+    axes[0].set_title("Time Domain Plot")
+
+    # zoom-in inset plot
+    inset_axis = axes[0].inset_axes((0.12, 0.25, 0.5, 0.35))
+    inset_axis.plot(t[start_pts : start_pts + 50], Contaminated[0, start_pts : start_pts + 50], color="orange")
+    inset_axis.plot(t[start_pts : start_pts + 50], Clean[0, start_pts : start_pts + 50], color='dodgerblue')
+    axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.4)
+    inset_axis.patch.set_alpha(0.7)
+
+    
+    ### Frequency domain Plottig ###  
+
+    freqs, _, _, psd_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
+
+    axes[1].semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='orange', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=1)
+    axes[1].legend(prop={'size': 10}, loc='lower left')
+    axes[1].set_xlabel("Frequency (Hz)"); axes[1].set_ylabel("Log power (dB/Hz)")
+    axes[1].set_title("Frequency Domain Plot")
+
+    fig.tight_layout()
     plt.show()
-    plt.figure(figsize=(20, 3))
-    plt.plot(t, Artifact[0], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.7)
-    plt.plot(t, Contaminated[0], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
-    plt.plot(t, Clean[0], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
-    plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
-    plt.legend()
-    plt.show()
 
-    # Plot [Contaminated / Artifact / Clean]
-    plt.figure(figsize=(20,9))
-    plt.subplot(3, 1, 1)
-    plt.plot(t, Contaminated[0], color='orange')
-    plt.xlabel("Time (seconds)")
-    plt.title('Contaminated Signal')
 
-    plt.subplot(3, 1, 2)
-    plt.plot(t, Artifact[0], color='tomato')
-    plt.xlabel("Time (seconds)")
-    plt.title('Artifact Signal')
+    ### Plot [Contaminated / Artifact / Clean] ###
 
-    plt.subplot(3, 1, 3)
-    plt.plot(t, Clean[0], color='dodgerblue')
-    plt.xlabel("Time (seconds)")
-    plt.title('Clean Signal')
+    plt.figure(figsize=(15,7))
+    plt.subplot(3, 2, 1)
+    plt.plot(t[start_pts:end_pts], Contaminated[0][start_pts:end_pts], color='orange')
+    plt.xlabel("Time (seconds)"); plt.title('Contaminated Signal')
+
+    plt.subplot(3, 2, 3)
+    plt.plot(t[start_pts:end_pts], Artifact[0][start_pts:end_pts], color='tomato')
+    plt.xlabel("Time (seconds)"); plt.title('Artifact Signal')
+
+    plt.subplot(3, 2, 5)
+    plt.plot(t[start_pts:end_pts], Clean[0][start_pts:end_pts], color='dodgerblue')
+    plt.xlabel("Time (seconds)"); plt.title('Clean Signal')
+
+    # Zoom-In 
+    plt.subplot(3, 2, 2)
+    plt.plot(t[start_pts : start_pts + 200], Contaminated[0][start_pts : start_pts + 200], color='orange')
+    plt.xlabel("Time (seconds)"); plt.title('Contaminated Signal (Zoom-In)')
+
+    plt.subplot(3, 2, 4)
+    plt.plot(t[start_pts : start_pts + 200], Artifact[0][start_pts : start_pts + 200], color='tomato')
+    plt.xlabel("Time (seconds)"); plt.title('Artifact Signal (Zoom-In)')
+
+    plt.subplot(3, 2, 6)
+    plt.plot(t[start_pts : start_pts + 200], Clean[0][:200], color='dodgerblue')
+    plt.xlabel("Time (seconds)"); plt.title('Clean Signal (Zoom-In)')
 
     plt.tight_layout()
     plt.show()
 
-    # Plot Zoom-In [Contaminated / Artifact / Clean]
-    plt.figure(figsize=(20,8))
-    plt.subplot(3, 1, 1)
-    plt.plot(t[:200], Contaminated[0][:200], color='orange')
-    plt.xlabel("Time (seconds)")
-    plt.title('Contaminated Signal')
-
-    plt.subplot(3, 1, 2)
-    plt.plot(t[:200], Artifact[0][:200], color='tomato')
-    plt.xlabel("Time (seconds)")
-    plt.title('Artifact Signal')
-
-    plt.subplot(3, 1, 3)
-    plt.plot(t[:200], Clean[0][:200], color='dodgerblue')
-    plt.xlabel("Time (seconds)")
-    plt.title('Clean Signal')
-
-    plt.tight_layout()
-    plt.show()
+    ### Time domain Plotting ###
+    # plt.figure(figsize=(8, 3))
+    # plt.plot(t[start_pts:end_pts], Artifact[0][start_pts:end_pts], label='Artifact Signal', color='tomato', alpha=1, linewidth=0.5)
+    # plt.plot(t[start_pts:end_pts], Contaminated[0][start_pts:end_pts], label='Contaminated Signal', color='orange', alpha=1, linewidth=0.5)
+    # plt.plot(t[start_pts:end_pts], Clean[0][start_pts:end_pts], label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.5)
+    # plt.xlabel('Time (seconds)');plt.ylabel('Amplitude');plt.title('Contaminated vs Clean Signal')
+    # plt.legend(prop={'size': 10}, loc='lower left')
+    # plt.show()
 
     ### Frequency domain Plottig ###  
-    freqs, _, _, Contaminated_psd = FFT(Contaminated, fs=2000, single_sided=True)
-    _, _, _, Clean_psd = FFT(Clean, fs=2000, single_sided=True)
+    # freqs, _, _, Contaminated_psd = FFT(Contaminated, fs=2000, single_sided=True)
+    # _, _, _, Clean_psd = FFT(Clean, fs=2000, single_sided=True)
 
-    # print(freqs.shape)
-    # print(Contaminated_psd.shape)
-
-    plt.figure(figsize=(10, 7))
-    plt.plot(freqs[1:], np.log10(Contaminated_psd[0][1:]), label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
-    plt.plot(freqs[1:], np.log10(Clean_psd[0][1:]), label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
-    plt.xlabel('Frequency [Hz]')
-    plt.ylabel('Amplitude')
-    plt.title('Contaminated vs Clean Signal')
-    plt.legend()
-    plt.show()
-
+    # plt.figure(figsize=(10, 7))
+    # plt.plot(freqs[1:], np.log10(Contaminated_psd[0][1:]), label='Contaminated Signal', color='orange', alpha=1, linewidth=0.7)
+    # plt.plot(freqs[1:], np.log10(Clean_psd[0][1:]), label='Clean Signal', color='dodgerblue', alpha=1, linewidth=0.7)
+    # plt.xlabel('Frequency [Hz]')
+    # plt.ylabel('Amplitude')
+    # plt.title('Contaminated vs Clean Signal')
+    # plt.legend()
+    # plt.show()
     return Contaminated, Clean, Artifact
 
 
@@ -124,60 +140,7 @@ def Loss_Plot(loss_list):
             min_value = val
     print("Minimal Loss:", min_value, f"[{min_index}]\n")
 
-def Result_Plot_v2(Contaminated, SACed, Clean):
-    t = np.linspace(0, 2, num=4000) 
-    start_time = 1; # [sec]
-    end_time = 2; # [sec]
-    start_pts = start_time*fs
-    end_pts = end_time*fs
-    times = np.arange(end_pts - start_pts) / fs
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-    inset_axis = axes[0].inset_axes((0.12, 0.6, 0.5, 0.35))
-
-    # main timeseries plot
-    axes[0].plot(
-        times, data[0, start_pts:end_pts], color="black", alpha=0.3, label="Unfiltered"
-    )
-    axes[0].plot(
-        times, artefact_free[0, start_pts:end_pts], linewidth=3, label="Artefact-free"
-    )
-    axes[0].plot(times, filtered_data[0, start_pts:end_pts], label="Filtered (PyPARRM)")
-    axes[0].legend()
-    axes[0].set_xlabel("Time (s)")
-    axes[0].set_ylabel("Amplitude (mV)")
-
-    # timeseries inset plot
-    inset_axis.plot(times[:50], artefact_free[0, start_pts : start_pts + 50], linewidth=3)
-    inset_axis.plot(times[:50], filtered_data[0, start_pts : start_pts + 50])
-    axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.4)
-    inset_axis.patch.set_alpha(0.7)
-
-    # power spectral density plot
-    n_freqs = fs / 2
-    psd_freqs, psd_raw = compute_psd(
-        data[0, start_pts:end_pts], fs, int(n_freqs * 2)
-    )
-    _, psd_filtered = compute_psd(
-        filtered_data[0, start_pts:end_pts], fs, int(n_freqs * 2)
-    )
-    _, psd_artefact_free = compute_psd(
-        artefact_free[0, start_pts:end_pts], fs, int(n_freqs * 2)
-    )
-
-    axes[1].loglog(
-        psd_freqs, psd_raw, color="black", alpha=0.3, label="Unfiltered"
-    )
-    axes[1].loglog(
-        psd_freqs, psd_artefact_free, linewidth=3, label="Artefact-free"
-    )
-    axes[1].loglog(psd_freqs, psd_filtered, label="Filtered (PyPARRM)")
-    axes[1].legend()
-    axes[1].set_xlabel("Log frequency (Hz)")
-    axes[1].set_ylabel("Log power (dB/Hz)")
-
-    fig.tight_layout()
-    fig.show()
 
 
 def Result_Plot(Contaminated, SACed, Clean):
@@ -278,6 +241,115 @@ def Result_Plot(Contaminated, SACed, Clean):
 
 
 
+
+def Result_Plot_v2(Contaminated, SACed, Clean, save_path='../../../result/', save_title='latest result'):
+    
+    """
+    모델의 결과를 plot하고 save하는 함수
+    parameter: Contaminated, SACed_signal, Clean, save_path, save_title
+    return: None
+
+    save_path: 결과를 저장할 경로 ex) '../../../result/CNN'
+    save_title: 어떤 코드를 실행한 결과인지 명시. 저장되는 파일명의 앞부분에 해당됨 ex) CNN_IO_time_L_time
+    
+    ex) 
+    save_title + '_time_domain_errors.npy'
+    save_title + '_freq_domain_errors.npy'
+    save_title + '_fig.png'
+    """
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import mean_squared_error
+
+    ### Time MAE / MSE ###
+
+    time_domain_errors = np.array([
+        mean_absolute_error(SACed, Clean),
+        mean_squared_error(SACed, Clean)])
+    
+    time_domain_errors = np.round(time_domain_errors, 4)
+
+    np.save(f"{save_path}{save_title + '_time_domain_errors'}.npy", time_domain_errors) # 결과를 numpy 배열로 저장
+
+    print("<Time Domain Error>")
+    print(f"Mean Absolute Error: {time_domain_errors[0]}")
+    print(f"Mean Squared Error: {time_domain_errors[1]}")
+
+
+    ### Time domain Plotting ###
+
+    t = np.linspace(0, 2, num=4000) 
+    start_time = 1; # [sec]
+    end_time = 1.5; # [sec]
+    fs = 2000
+    start_pts = int(start_time*fs)
+    end_pts = int(end_time*fs)
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    inset_axis = axes[0].inset_axes((0.06, 0.4, 0.3, 0.2))
+
+    # main timeseries plot
+    axes[0].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="orange", alpha=1, linewidth=1)
+    axes[0].plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
+    axes[0].plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=1)
+    axes[0].legend(prop={'size': 10}, loc='lower left')
+    axes[0].set_xlabel("Time (s)"); axes[0].set_ylabel("Amplitude (mV)"); 
+    axes[0].set_title("Time Domain Plot")
+
+    # zoom-in(x1) inset plot
+    inset_axis.plot(t[start_pts : start_pts + 100], Contaminated[0, start_pts : start_pts + 100], color="orange")
+    inset_axis.plot(t[start_pts : start_pts + 100], Clean[0, start_pts : start_pts + 100], color='dodgerblue')
+    inset_axis.plot(t[start_pts : start_pts + 100], SACed[0, start_pts : start_pts + 100], color='red')
+    axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.4)
+    inset_axis.patch.set_alpha(0.7)
+
+    # zoom-in(x2) inset plot
+    inner_inset_axis = inset_axis.inset_axes((1.0, -1.6, 1.2, 1.2))  # 위치와 크기 조정
+    inner_inset_axis.plot(t[start_pts : start_pts + 50], Clean[0, start_pts : start_pts + 50], color='dodgerblue')
+    inner_inset_axis.plot(t[start_pts : start_pts + 50], SACed[0, start_pts : start_pts + 50], color='red')
+    inset_axis.indicate_inset_zoom(inner_inset_axis, edgecolor="black", alpha=0.4)
+    inner_inset_axis.patch.set_alpha(0.7)
+
+    
+    ### Frequency domain Plottig ###  
+
+    freqs, _, _, psd_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
+    _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
+
+    ### Frequency MAE / MSE ###
+
+    freq_domain_errors = np.array([
+        mean_absolute_error(psd_SACed, psd_Clean),
+        mean_squared_error(psd_SACed, psd_Clean)])
+    
+    freq_domain_errors = np.round(freq_domain_errors, 4)
+
+    print("<Frequency Domain Error>")
+    print(f"Mean Absolute Error: {freq_domain_errors[0]}")
+    print(f"Mean Squared Error: {freq_domain_errors[1]}")
+
+    np.save(f"{save_path}{save_title + '_freq_domain_errors'}.npy", freq_domain_errors) # 결과를 numpy 배열로 저장
+
+
+    axes[1].semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='orange', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=1)
+    axes[1].legend(prop={'size': 10}, loc='lower left')
+    axes[1].set_xlabel("Frequency (Hz)"); axes[1].set_ylabel("Log power (dB/Hz)")
+    axes[1].set_title("Frequency Domain Plot")
+
+    fig.tight_layout()
+    
+    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
+    plt.show()
+
+
+
+
+
 def FFT(data, fs=2000, single_sided=True):
     
     import numpy as np
@@ -307,6 +379,3 @@ def FFT(data, fs=2000, single_sided=True):
         
     psd = power_spectrum / N
     return freqs, amplitude_spectrum, power_spectrum, psd
-
-
-

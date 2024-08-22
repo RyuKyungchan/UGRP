@@ -28,3 +28,20 @@ def FFT(data, fs=2000, single_sided=True):
         
     psd = power_spectrum / N
     return freqs, amplitude_spectrum, power_spectrum, psd
+
+
+# power spectral density plot
+def compute_psd(data, fs, n_freqs, single_sided=True):
+    import numpy as np
+
+    if data.ndim == 1:
+        data = np.expand_dims(data, axis=0)
+    
+    if single_sided:
+        freqs = np.fft.rfftfreq(len(data[0]), 1/fs)
+        psd = np.abs(np.fft.rfft(data))**2 / (fs * len(data[0]))
+        return freqs[:n_freqs], psd[:n_freqs]
+    else:
+        freqs = np.fft.fftshift(np.fft.fftfreq(len(data[0]), 1/fs))
+        psd = np.abs(np.fft.fft(data))**2 / (fs * len(data[0]))
+        return freqs[:n_freqs], psd[:n_freqs]
