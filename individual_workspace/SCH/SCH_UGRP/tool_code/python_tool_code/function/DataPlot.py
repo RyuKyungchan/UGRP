@@ -239,10 +239,100 @@ def Result_Plot(Contaminated, SACed, Clean):
 
     return None
 
-
-
-
 def Result_Plot_v2(Contaminated, SACed, Clean, save_path='../../../result/', save_title='latest result'):
+    
+    """
+    모델의 결과를 plot하고 save하는 함수
+    parameter: Contaminated, SACed_signal, Clean, save_path, save_title
+    return: None
+
+    save_path: 결과를 저장할 경로 ex) '../../../result/CNN'
+    save_title: 어떤 코드를 실행한 결과인지 명시. 저장되는 파일명의 앞부분에 해당됨 ex) CNN_IO_time_L_time
+    
+    ex) 
+    save_title + '_errors.npy'
+    save_title + '_fig.png'
+    """
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import mean_squared_error
+
+    ### Time domain Plotting ###
+
+    t = np.linspace(0, 2, num=4000) 
+    start_time = 1; # [sec]
+    end_time = 1.5; # [sec]
+    fs = 2000
+    start_pts = int(start_time*fs)
+    end_pts = int(end_time*fs)
+
+    fig, axes = plt.subplots(2, 1, figsize=(5, 8))
+    inset_axis = axes[0].inset_axes((0.11, 0.27, 0.5, 0.35))
+
+    # main timeseries plot
+    axes[0].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="orange", alpha=1, linewidth=1)
+    axes[0].plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
+    axes[0].plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=1)
+    axes[0].legend(prop={'size': 8}, loc='lower left')
+    axes[0].set_xlabel("Time (s)"); axes[0].set_ylabel("Amplitude (mV)"); 
+    axes[0].set_xlim(t[start_pts-20], t[end_pts+20])
+    axes[0].set_title("Time Domain Plot")
+
+    # zoom-in(x1) inset plot
+    inset_axis.plot(t[start_pts + 200 : start_pts + 400], Clean[0, start_pts + 200 : start_pts + 400], color='dodgerblue', linewidth=0.9)
+    inset_axis.plot(t[start_pts + 200 : start_pts + 400], SACed[0, start_pts + 200 : start_pts + 400], color='red', linewidth=0.9)
+    axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.8, lw=1.2)
+    inset_axis.plot(t[start_pts + 200 : start_pts + 400], Contaminated[0, start_pts + 200 : start_pts + 400], color='orange', linewidth=0.8)
+    inset_axis.patch.set_alpha(1)
+    inset_axis.set_xlim(t[start_pts + 200-1], t[start_pts + 400])
+    min_val = min(Clean[0, start_pts + 200 : start_pts + 400].min(), SACed[0, start_pts + 200 : start_pts + 400].min())
+    max_val = max(Clean[0, start_pts + 200 : start_pts + 400].max(), SACed[0, start_pts + 200 : start_pts + 400].max())
+    inset_axis.set_ylim(min_val-0.2, max_val+0.2)
+
+    ### Frequency domain Plottig ###  
+
+    freqs, _, _, psd_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
+    _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
+
+    axes[1].semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='orange', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=1)
+    axes[1].legend(prop={'size': 8}, loc='lower left')
+    axes[1].set_xlabel("Frequency (Hz)"); axes[1].set_ylabel("Log power (dB/Hz)")
+    axes[1].set_xlim(freqs[1]-5, freqs[600]+5)
+    axes[1].set_title("Frequency Domain Plot")
+
+    fig.tight_layout()
+    
+    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
+    plt.show()
+
+    ### MAE / MSE ###
+
+    errors = np.array([
+        mean_absolute_error(SACed, Clean),
+        mean_squared_error(SACed, Clean),
+        mean_absolute_error(psd_SACed, psd_Clean),
+        mean_squared_error(psd_SACed, psd_Clean)])
+    
+    errors = np.round(errors, 4)
+
+    print("<Time Domain Error>")
+    print(f"Mean Absolute Error: {errors[0]}")
+    print(f"Mean Squared Error: {errors[1]}")
+
+    print("<Frequency Domain Error>")
+    print(f"Mean Absolute Error: {errors[2]}")
+    print(f"Mean Squared Error: {errors[3]}")
+
+    np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
+
+
+
+def Result_Plot_v3(Contaminated, SACed, Clean, save_path='../../../result/', save_title='latest result'):
     
     """
     모델의 결과를 plot하고 save하는 함수
