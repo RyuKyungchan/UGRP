@@ -86,3 +86,20 @@ def time_inv_scaling(Contaminated, SACed, Clean, scaler_x, scaler_y=None):
     Clean_inverse_scaled = np.delete(Clean_inverse_scaled, 0, axis=0)
 
     return Contaminated_inverse_scaled, SACed_inverse_scaled, Clean_inverse_scaled
+
+def time_inv_scaling_simpleversion(Contaminated, SACed, Clean, scaler_x, scaler_y=None):
+    """
+    Time domain에서 StandardScaler inverse transform하는 함수
+    parameter: Contaminated, SACed, Clean, scaler_x, scaler_y
+    return: Contaminated_inverse_scaled, SACed_inverse_scaled, Clean_inverse_scaled
+    """
+    import numpy as np
+
+    def inverse_transform(data, scaler):
+        return np.array([scaler.inverse_transform(d.reshape(-1, 1)).squeeze() for d in data])
+
+    Contaminated_inverse_scaled = inverse_transform(Contaminated, scaler_x)
+    SACed_inverse_scaled = inverse_transform(SACed, scaler_x if scaler_y is None else scaler_y)
+    Clean_inverse_scaled = inverse_transform(Clean, scaler_x if scaler_y is None else scaler_y)
+
+    return Contaminated_inverse_scaled, SACed_inverse_scaled, Clean_inverse_scaled
