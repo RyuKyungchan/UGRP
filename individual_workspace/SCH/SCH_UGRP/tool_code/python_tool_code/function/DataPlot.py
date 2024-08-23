@@ -239,7 +239,7 @@ def Result_Plot_v2(Contaminated, SACed, Clean, horizontal=True, small=False, sav
     
     ex) 
     save_title + '_errors.npy'
-    save_title + '_fig.svg'
+    save_title + '_fig.eps'
     """
 
     import numpy as np
@@ -307,7 +307,7 @@ def Result_Plot_v2(Contaminated, SACed, Clean, horizontal=True, small=False, sav
 
     fig.tight_layout()
     
-    plt.savefig(save_path + save_title + "_fig" + ".svg")# figure를 저장
+    plt.savefig(save_path + save_title + "_fig" + ".eps")# figure를 저장
     plt.show()
 
     ### MAE / MSE ###
@@ -404,7 +404,7 @@ def Result_Plot_v3(Contaminated, SACed, Clean, save_path='../../../result/', sav
 
     fig.tight_layout()
     
-    plt.savefig(save_path + save_title + "_fig" + ".svg")# figure를 저장
+    plt.savefig(save_path + save_title + "_fig" + ".eps")# figure를 저장
     plt.show()
 
     ### MAE / MSE ###
@@ -440,7 +440,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/pap
     
     ex) 
     save_title + '_errors.npy'
-    save_title + '_fig.svg'
+    save_title + '_fig.eps'
     """
 
     import numpy as np
@@ -484,7 +484,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/pap
     inset_axis.set_ylim(min_val-0.2, max_val+0.2)
 
     fig1.tight_layout()
-    plt.savefig(save_path + save_title + "_time_domain_plot" + ".svg")
+    plt.savefig(save_path + save_title + "_time_domain_plot" + ".eps")
     plt.show()
 
     # 두 번째 figure: Frequency Domain Plot
@@ -505,7 +505,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/pap
     ax2.set_title("Frequency Domain Plot")
 
     fig2.tight_layout()
-    plt.savefig(save_path + save_title + "_frequency_domain_plot" + ".svg")
+    plt.savefig(save_path + save_title + "_frequency_domain_plot" + ".eps")
     plt.show()
 
     ### MAE / MSE ###
