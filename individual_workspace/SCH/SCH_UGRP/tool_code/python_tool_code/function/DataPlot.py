@@ -174,19 +174,13 @@ def Result_Plot(Contaminated, SACed, Clean):
     # plt.plot(t, Contaminated_signal, label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
     plt.plot(t, Clean_signal, label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
     plt.plot(t, SACed_signal, label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
-    plt.xlabel('Time (seconds)')
-    plt.ylabel('Signal Value')
-    plt.title('CNN result')
-    plt.legend()
+    plt.xlabel('Time (seconds)'); plt.ylabel('Signal Value'); plt.title('CNN result'); plt.legend()
 
     plt.subplot(2, 1, 2)
     # plt.plot(t[:200], Contaminated_signal[:200], label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
     plt.plot(t[:200], Clean_signal[:200], label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
     plt.plot(t[:200], SACed_signal[:200], label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
-    plt.xlabel('Time (seconds)')
-    plt.ylabel('Signal Value')
-    plt.title('zoom-in')
-    plt.legend()
+    plt.xlabel('Time (seconds)'); plt.ylabel('Signal Value'); plt.title('zoom-in'); plt.legend()
 
     plt.tight_layout()
     plt.show()
@@ -197,19 +191,13 @@ def Result_Plot(Contaminated, SACed, Clean):
     plt.plot(t, Contaminated_signal, label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
     plt.plot(t, Clean_signal, label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
     plt.plot(t, SACed_signal, label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
-    plt.xlabel('Time (seconds)')
-    plt.ylabel('Signal Value')
-    plt.title('CNN result')
-    plt.legend()
+    plt.xlabel('Time (seconds)'); plt.ylabel('Signal Value'); plt.title('CNN result'); plt.legend()
 
     plt.subplot(2, 1, 2)
     plt.plot(t[:200], Contaminated_signal[:200], label='Contaminated Signal', color='orange', alpha=0.7, linewidth=0.7)
     plt.plot(t[:200], Clean_signal[:200], label='Clean Signal', color='dodgerblue', alpha=0.7, linewidth=0.7)
     plt.plot(t[:200], SACed_signal[:200], label='SACed Signal', color='red', alpha=0.7, linewidth=0.7)
-    plt.xlabel('Time (seconds)')
-    plt.ylabel('Signal Value')
-    plt.title('zoom-in')
-    plt.legend()
+    plt.xlabel('Time (seconds)'); plt.ylabel('Signal Value'); plt.title('zoom-in'); plt.legend()
 
     plt.tight_layout()
     plt.show()
@@ -239,7 +227,7 @@ def Result_Plot(Contaminated, SACed, Clean):
 
     return None
 
-def Result_Plot_v2(Contaminated, SACed, Clean, save_path='../../../result/', save_title='latest result'):
+def Result_Plot_v2(Contaminated, SACed, Clean, horizontal=True, small=False, save_path='../../../result/', save_title='latest result'):
     
     """
     모델의 결과를 plot하고 save하는 함수
@@ -251,7 +239,7 @@ def Result_Plot_v2(Contaminated, SACed, Clean, save_path='../../../result/', sav
     
     ex) 
     save_title + '_errors.npy'
-    save_title + '_fig.png'
+    save_title + '_fig.svg'
     """
 
     import numpy as np
@@ -268,8 +256,20 @@ def Result_Plot_v2(Contaminated, SACed, Clean, save_path='../../../result/', sav
     start_pts = int(start_time*fs)
     end_pts = int(end_time*fs)
 
-    fig, axes = plt.subplots(2, 1, figsize=(5, 8))
-    inset_axis = axes[0].inset_axes((0.11, 0.27, 0.5, 0.35))
+    if horizontal:
+        if small:
+            fig, axes = plt.subplots(1, 2, figsize=(6, 3))
+            inset_axis = axes[0].inset_axes((0.06, 0.4, 0.3, 0.2))
+        else: # large
+            fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+            inset_axis = axes[0].inset_axes((0.11, 0.27, 0.5, 0.35))
+    else: # vertical
+        if small:
+            fig, axes = plt.subplots(2, 1, figsize=(3, 5))
+            inset_axis = axes[0].inset_axes((0.06, 0.4, 0.3, 0.2))
+        else: # large
+            fig, axes = plt.subplots(2, 1, figsize=(5, 8))
+            inset_axis = axes[0].inset_axes((0.11, 0.27, 0.5, 0.35))
 
     # main timeseries plot
     axes[0].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="orange", alpha=1, linewidth=1)
@@ -307,7 +307,7 @@ def Result_Plot_v2(Contaminated, SACed, Clean, save_path='../../../result/', sav
 
     fig.tight_layout()
     
-    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
+    plt.savefig(save_path + save_title + "_fig" + ".svg")# figure를 저장
     plt.show()
 
     ### MAE / MSE ###
@@ -353,20 +353,6 @@ def Result_Plot_v3(Contaminated, SACed, Clean, save_path='../../../result/', sav
     from sklearn.metrics import mean_absolute_error
     from sklearn.metrics import mean_squared_error
 
-    ### Time MAE / MSE ###
-
-    time_domain_errors = np.array([
-        mean_absolute_error(SACed, Clean),
-        mean_squared_error(SACed, Clean)])
-    
-    time_domain_errors = np.round(time_domain_errors, 4)
-
-    np.save(f"{save_path}{save_title + '_time_domain_errors'}.npy", time_domain_errors) # 결과를 numpy 배열로 저장
-
-    print("<Time Domain Error>")
-    print(f"Mean Absolute Error: {time_domain_errors[0]}")
-    print(f"Mean Squared Error: {time_domain_errors[1]}")
-
 
     ### Time domain Plotting ###
 
@@ -409,21 +395,6 @@ def Result_Plot_v3(Contaminated, SACed, Clean, save_path='../../../result/', sav
     _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
     _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
 
-    ### Frequency MAE / MSE ###
-
-    freq_domain_errors = np.array([
-        mean_absolute_error(psd_SACed, psd_Clean),
-        mean_squared_error(psd_SACed, psd_Clean)])
-    
-    freq_domain_errors = np.round(freq_domain_errors, 4)
-
-    print("<Frequency Domain Error>")
-    print(f"Mean Absolute Error: {freq_domain_errors[0]}")
-    print(f"Mean Squared Error: {freq_domain_errors[1]}")
-
-    np.save(f"{save_path}{save_title + '_freq_domain_errors'}.npy", freq_domain_errors) # 결과를 numpy 배열로 저장
-
-
     axes[1].semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='orange', alpha = 1, linewidth=1)
     axes[1].semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=1)
     axes[1].semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=1)
@@ -433,11 +404,129 @@ def Result_Plot_v3(Contaminated, SACed, Clean, save_path='../../../result/', sav
 
     fig.tight_layout()
     
-    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
+    plt.savefig(save_path + save_title + "_fig" + ".svg")# figure를 저장
     plt.show()
 
+    ### MAE / MSE ###
+
+    errors = np.array([
+        mean_absolute_error(SACed, Clean),
+        mean_squared_error(SACed, Clean),
+        mean_absolute_error(psd_SACed, psd_Clean),
+        mean_squared_error(psd_SACed, psd_Clean)])
+    
+    errors = np.round(errors, 4)
+
+    print("<Time Domain Error>")
+    print(f"Mean Absolute Error: {errors[0]}")
+    print(f"Mean Squared Error: {errors[1]}")
+
+    print("<Frequency Domain Error>")
+    print(f"Mean Absolute Error: {errors[2]}")
+    print(f"Mean Squared Error: {errors[3]}")
+
+    np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
 
 
+def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/paper/', save_title='latest result'):
+    
+    """
+    모델의 결과를 plot하고 save하는 함수
+    parameter: Contaminated, SACed_signal, Clean, save_path, save_title
+    return: None
+
+    save_path: 결과를 저장할 경로 ex) '../../../result/CNN'
+    save_title: 어떤 코드를 실행한 결과인지 명시. 저장되는 파일명의 앞부분에 해당됨 ex) CNN_IO_time_L_time
+    
+    ex) 
+    save_title + '_errors.npy'
+    save_title + '_fig.svg'
+    """
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import mean_squared_error
+
+    ### Time domain Plotting ###
+
+    t = np.linspace(0, 2, num=4000) 
+    start_time = 1; # [sec]
+    end_time = 1.5; # [sec]
+    fs = 2000
+    start_pts = int(start_time*fs)
+    end_pts = int(end_time*fs)
+
+    # 첫 번째 figure: Time Domain Plot
+    fig1, ax1 = plt.subplots(figsize=(3, 2.5))
+    inset_axis = ax1.inset_axes((0.11, 0.2, 0.6, 0.4))
+
+    # main timeseries plot
+    ax1.plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="orange", alpha=1, linewidth=0.5)
+    ax1.plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=0.5)
+    ax1.plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=0.5)
+    ax1.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("Amplitude (mV)")
+    ax1.set_xlim(t[start_pts-20], t[end_pts+20])
+    ax1.set_xticks([1.0, 1.25, 1.5])
+    ax1.set_title("Time Domain Plot")
+
+    # zoom-in(x1) inset plot
+    inset_axis.plot(t[start_pts + 200 : start_pts + 400], Clean[0, start_pts + 200 : start_pts + 400], color='dodgerblue', linewidth=0.5)
+    inset_axis.plot(t[start_pts + 200 : start_pts + 400], SACed[0, start_pts + 200 : start_pts + 400], color='red', linewidth=0.5)
+    ax1.indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.8, lw=1.2)
+    inset_axis.plot(t[start_pts + 200 : start_pts + 400], Contaminated[0, start_pts + 200 : start_pts + 400], color='orange', linewidth=0.5)
+    inset_axis.patch.set_alpha(1)
+    inset_axis.set_xlim(t[start_pts + 200-1], t[start_pts + 400])
+    min_val = min(Clean[0, start_pts + 200 : start_pts + 400].min(), SACed[0, start_pts + 200 : start_pts + 400].min())
+    max_val = max(Clean[0, start_pts + 200 : start_pts + 400].max(), SACed[0, start_pts + 200 : start_pts + 400].max())
+    inset_axis.set_ylim(min_val-0.2, max_val+0.2)
+
+    fig1.tight_layout()
+    plt.savefig(save_path + save_title + "_time_domain_plot" + ".svg")
+    plt.show()
+
+    # 두 번째 figure: Frequency Domain Plot
+    fig2, ax2 = plt.subplots(figsize=(3, 2.5))
+
+    freqs, _, _, psd_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
+    _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
+
+    ax2.semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='orange', alpha = 1, linewidth=0.5)
+    ax2.semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=0.5)
+    ax2.semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=0.5)
+    ax2.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
+    ax2.set_xlabel("Frequency (Hz)")
+    ax2.set_ylabel("Log power (dB/Hz)")
+    ax2.set_xlim(freqs[1]-5, freqs[600]+5)
+    ax2.set_xticks([0, 150, 300])
+    ax2.set_title("Frequency Domain Plot")
+
+    fig2.tight_layout()
+    plt.savefig(save_path + save_title + "_frequency_domain_plot" + ".svg")
+    plt.show()
+
+    ### MAE / MSE ###
+
+    errors = np.array([
+        mean_absolute_error(SACed, Clean),
+        mean_squared_error(SACed, Clean),
+        mean_absolute_error(psd_SACed, psd_Clean),
+        mean_squared_error(psd_SACed, psd_Clean)])
+    
+    errors = np.round(errors, 4)
+
+    print("<Time Domain Error>")
+    print(f"Mean Absolute Error: {errors[0]}")
+    print(f"Mean Squared Error: {errors[1]}")
+
+    print("<Frequency Domain Error>")
+    print(f"Mean Absolute Error: {errors[2]}")
+    print(f"Mean Squared Error: {errors[3]}")
+
+    np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
 
 
 def FFT(data, fs=2000, single_sided=True):
