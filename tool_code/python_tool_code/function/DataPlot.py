@@ -153,7 +153,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path='../../../result/', save_t
     
     ex) 
     save_title + '_errors.npy'
-    save_title + '_fig.svg'
+    save_title + '_fig.png'
     """
 
     import numpy as np
@@ -221,7 +221,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path='../../../result/', save_t
 
     fig.tight_layout()
     
-    plt.savefig(save_path + save_title + "_fig" + ".svg")# figure를 저장
+    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
     plt.show()
 
     ### MAE / MSE ###
@@ -318,7 +318,7 @@ def Result_Plot2(Contaminated, SACed, Clean, save_path='../../../result/', save_
 
     fig.tight_layout()
     
-    plt.savefig(save_path + save_title + "_fig" + ".svg")# figure를 저장
+    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
     plt.show()
 
     ### MAE / MSE ###
