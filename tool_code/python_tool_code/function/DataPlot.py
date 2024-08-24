@@ -161,7 +161,7 @@ def MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path=None, save_title=None)
         [mean_mse_time, std_mse_time],
         [mean_mse_psd, std_mse_psd]])
     
-    mse = np.round(mse, 3)
+    # mse = np.round(mse, 3)
 
     print("< MSE >")
     print(f"Time Domain MSE: {mse[0][0]} ± {mse[0][1]}")
