@@ -140,6 +140,35 @@ def Loss_Plot(loss_list):
     print("Minimal Loss:", min_value, f"[{min_index}]\n")
 
 
+def MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path=None, save_title=None):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import mean_squared_error
+    
+
+    mse_time = [mean_squared_error(SACed[i], Clean[i]) for i in range(len(SACed))]
+    mse_psd = [mean_squared_error(psd_SACed[i], psd_Clean[i]) for i in range(len(SACed))]
+    
+    mean_mse_time = np.mean(mse_time)
+    std_mse_time = np.std(mse_time)
+    mean_mse_psd = np.mean(mse_psd)
+    std_mse_psd = np.std(mse_psd)
+
+    # erros라는 numpy 배열로 저장. 2x2
+    mse = np.array([
+        [mean_mse_time, std_mse_time],
+        [mean_mse_psd, std_mse_psd]])
+    
+    mse = np.round(mse, 3)
+
+    print("< MSE >")
+    print(f"Time Domain MSE: {mse[0][0]} ± {mse[0][1]}")
+    print(f"Frequency Domain MSE: {mse[1][0]} ± {mse[1][1]}")
+ 
+    if save_path != None and save_title != None:
+        np.save(f"{save_path}{save_title + '_MSE'}.npy", mse) # 결과를 numpy 배열로 저장
+
 
 def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, horizontal=True, small=False):
     
@@ -226,25 +255,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
     plt.show()
 
     ### MAE / MSE ###
-
-    errors = np.array([
-        mean_absolute_error(SACed, Clean),
-        mean_squared_error(SACed, Clean),
-        mean_absolute_error(psd_SACed, psd_Clean),
-        mean_squared_error(psd_SACed, psd_Clean)])
-    
-    errors = np.round(errors, 4)
-
-    print("<Time Domain Error>")
-    print(f"Mean Absolute Error: {errors[0]}")
-    print(f"Mean Squared Error: {errors[1]}")
-
-    print("<Frequency Domain Error>")
-    print(f"Mean Absolute Error: {errors[2]}")
-    print(f"Mean Squared Error: {errors[3]}")
-
-    if save_path != None and save_title != None:
-        np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
+    MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
 
 
 
@@ -325,25 +336,7 @@ def Result_Plot2(Contaminated, SACed, Clean, save_path='../../../result/', save_
     plt.show()
 
     ### MAE / MSE ###
-
-    errors = np.array([
-        mean_absolute_error(SACed, Clean),
-        mean_squared_error(SACed, Clean),
-        mean_absolute_error(psd_SACed, psd_Clean),
-        mean_squared_error(psd_SACed, psd_Clean)])
-    
-    errors = np.round(errors, 4)
-
-    print("<Time Domain Error>")
-    print(f"Mean Absolute Error: {errors[0]}")
-    print(f"Mean Squared Error: {errors[1]}")
-
-    print("<Frequency Domain Error>")
-    print(f"Mean Absolute Error: {errors[2]}")
-    print(f"Mean Squared Error: {errors[3]}")
-
-    if save_path != None and save_title != None:
-        np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
+    MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
 
 
 def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/paper/', save_title='latest result'):
@@ -429,25 +422,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/pap
     plt.show()
 
     ### MAE / MSE ###
-
-    errors = np.array([
-        mean_absolute_error(SACed, Clean),
-        mean_squared_error(SACed, Clean),
-        mean_absolute_error(psd_SACed, psd_Clean),
-        mean_squared_error(psd_SACed, psd_Clean)])
-    
-    errors = np.round(errors, 4)
-
-    print("<Time Domain Error>")
-    print(f"Mean Absolute Error: {errors[0]}")
-    print(f"Mean Squared Error: {errors[1]}")
-
-    print("<Frequency Domain Error>")
-    print(f"Mean Absolute Error: {errors[2]}")
-    print(f"Mean Squared Error: {errors[3]}")
-
-    if save_path != None and save_title != None:
-        np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
+    MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
 
 
 def FFT(data, fs=2000, single_sided=True):
