@@ -141,7 +141,7 @@ def Loss_Plot(loss_list):
 
 
 
-def Result_Plot(Contaminated, SACed, Clean, save_path='../../../result/', save_title='latest result', horizontal=True, small=False):
+def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, horizontal=True, small=False):
     
     """
     모델의 결과를 plot하고 save하는 함수
@@ -220,8 +220,9 @@ def Result_Plot(Contaminated, SACed, Clean, save_path='../../../result/', save_t
     axes[1].set_title("Frequency Domain Plot")
 
     fig.tight_layout()
-    
-    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
+
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
     plt.show()
 
     ### MAE / MSE ###
@@ -242,7 +243,8 @@ def Result_Plot(Contaminated, SACed, Clean, save_path='../../../result/', save_t
     print(f"Mean Absolute Error: {errors[2]}")
     print(f"Mean Squared Error: {errors[3]}")
 
-    np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
+    if save_path != None and save_title != None:
+        np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
 
 
 
@@ -318,7 +320,8 @@ def Result_Plot2(Contaminated, SACed, Clean, save_path='../../../result/', save_
 
     fig.tight_layout()
     
-    plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_fig" + ".png")# figure를 저장
     plt.show()
 
     ### MAE / MSE ###
@@ -339,7 +342,8 @@ def Result_Plot2(Contaminated, SACed, Clean, save_path='../../../result/', save_
     print(f"Mean Absolute Error: {errors[2]}")
     print(f"Mean Squared Error: {errors[3]}")
 
-    np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
+    if save_path != None and save_title != None:
+        np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
 
 
 def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/paper/', save_title='latest result'):
@@ -419,7 +423,9 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/pap
     ax2.set_title("Frequency Domain Plot")
 
     fig2.tight_layout()
-    plt.savefig(save_path + save_title + "_frequency_domain_plot" + ".svg")
+
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_frequency_domain_plot" + ".svg")
     plt.show()
 
     ### MAE / MSE ###
@@ -440,7 +446,8 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/pap
     print(f"Mean Absolute Error: {errors[2]}")
     print(f"Mean Squared Error: {errors[3]}")
 
-    np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
+    if save_path != None and save_title != None:
+        np.save(f"{save_path}{save_title + '_errors'}.npy", errors) # 결과를 numpy 배열로 저장
 
 
 def FFT(data, fs=2000, single_sided=True):
