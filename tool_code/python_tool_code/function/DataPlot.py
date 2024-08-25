@@ -373,9 +373,9 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     fig1, ax1 = plt.subplots(figsize=(3, 2.5))
 
     # main timeseries plot
-    ax1.plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=0.9)
-    ax1.plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
-    ax1.plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=0.8)
+    ax1.plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=0.9, zorder=1)
+    ax1.plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1, zorder=2)
+    ax1.plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=0.8, zorder=3)
     ax1.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
     ax1.set_xlabel("Time (s)")
     ax1.set_ylabel("Amplitude (mV)")
@@ -388,7 +388,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     zoom_end = start_pts + 800
     min_val = -10
     max_val = 7.5
-    rect = plt.Rectangle((t[zoom_start], min_val), t[zoom_end] - t[zoom_start], max_val - min_val, edgecolor='black', facecolor='none', linestyle='-', linewidth=1.2, transform=ax1.transData)
+    rect = plt.Rectangle((t[zoom_start], min_val), t[zoom_end] - t[zoom_start], max_val - min_val, edgecolor='black', facecolor='none', linestyle='-', linewidth=1.2, zorder=4, transform=ax1.transData)
     ax1.add_patch(rect)
 
     fig1.tight_layout()
@@ -437,7 +437,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
 
     ### MAE / MSE ###
     MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
-
+    
     
 def Result_Plot_paper2(Contaminated, SACed, Clean, save_path=None, save_title=None):
     
