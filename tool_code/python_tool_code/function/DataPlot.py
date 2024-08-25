@@ -387,7 +387,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     zoom_start = start_pts + 600
     zoom_end = start_pts + 800
     min_val = -10
-    max_val = 5
+    max_val = 7.5
     rect = plt.Rectangle((t[zoom_start], min_val), t[zoom_end] - t[zoom_start], max_val - min_val, edgecolor='black', facecolor='none', linestyle='-', linewidth=1.2, transform=ax1.transData)
     ax1.add_patch(rect)
 
@@ -402,7 +402,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     ax_zoom.plot(t[zoom_start:zoom_end], SACed[0, zoom_start:zoom_end], color='red', linewidth=0.8)
     ax_zoom.plot(t[zoom_start:zoom_end], Contaminated[0, zoom_start:zoom_end], color='gray', linewidth=0.2)
     ax_zoom.set_xlim(t[zoom_start-1], t[zoom_end])
-    ax_zoom.set_ylim(min_val-0.5, max_val+1.0)
+    ax_zoom.set_ylim(min_val-0.5, max_val+0.5)
     ax_zoom.set_title("Zoom-in Time Domain Plot")
     ax_zoom.set_xlabel("Time (s)")
     ax_zoom.set_ylabel("Amplitude (mV)")

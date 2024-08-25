@@ -7,7 +7,6 @@ from copy import deepcopy
 from multiprocessing import cpu_count
 
 import numpy as np
-import cupy as cp
 
 from pqdm.threads import pqdm
 from scipy.optimize import fmin
