@@ -199,20 +199,7 @@ def MSE_std2(SACed, Clean, psd_SACed, psd_Clean, save_path=None, save_title=None
     mean_mse_psd = np.mean(mse_psd)
     std_mse_psd = np.std(mse_psd)
 
-    # erros라는 numpy 배열로 저장. 2x2
-    mse = np.array([
-        [mean_mse_time, std_mse_time],
-        [mean_mse_psd, std_mse_psd]])
-    
-    # mse = np.round(mse, 3)
-
-    print("< MSE >")
-    print(f"Time Domain MSE: {mse[0][0]} ± {mse[0][1]}")
-    print(f"Frequency Domain MSE: {mse[1][0]} ± {mse[1][1]}")
     print(f"Time + Frequency MSE: {(mean_mse_time+mean_mse_psd)/2} ± {(std_mse_time+std_mse_psd)/2}")
- 
-    if save_path != None and save_title != None:
-        np.save(f"{save_path}{save_title + '_MSE'}.npy", mse) # 결과를 numpy 배열로 저장
 
 
 def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, horizontal=True, small=False):
@@ -300,6 +287,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
     plt.show()
 
     ### MAE / MSE ###
+    MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
     MSE_std2(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
 
 
