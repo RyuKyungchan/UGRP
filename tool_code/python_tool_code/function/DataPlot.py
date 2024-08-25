@@ -260,7 +260,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
 
 
 
-def Result_Plot2(Contaminated, SACed, Clean, save_path='../../../result/', save_title='latest result'):
+def Result_Plot2(Contaminated, SACed, Clean, save_path=None, save_title=None):
     
     """
     모델의 결과를 plot하고 save하는 함수
@@ -340,7 +340,7 @@ def Result_Plot2(Contaminated, SACed, Clean, save_path='../../../result/', save_
     MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
 
 
-def Result_Plot_paper(Contaminated, SACed, Clean, save_path='../../../result/paper/', save_title='latest result'):
+def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=None):
     
     """
     모델의 결과를 plot하고 save하는 함수
