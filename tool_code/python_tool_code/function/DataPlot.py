@@ -171,6 +171,50 @@ def MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path=None, save_title=None)
         np.save(f"{save_path}{save_title + '_MSE'}.npy", mse) # 결과를 numpy 배열로 저장
 
 
+def MSE_std2(SACed, Clean, psd_SACed, psd_Clean, save_path=None, save_title=None):
+    import numpy as np
+    from sklearn.preprocessing import StandardScaler, MinMaxScaler
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import mean_squared_error
+
+    SACed_list = []
+    Clean_list = []
+    psd_SACed_list = []
+    psd_Clean_list = []
+
+    for saced, clean, psd_saced, psd_clean in zip(SACed, Clean, psd_SACed, psd_Clean):
+        time_scaler = MinMaxScaler()
+        Clean_list.append(time_scaler.fit_transform(clean.reshape(-1, 1)).squeeze())
+        SACed_list.append(time_scaler.transform(saced.reshape(-1, 1)).squeeze())
+
+        psd_scaler = MinMaxScaler()
+        psd_Clean_list.append(psd_scaler.fit_transform(psd_clean.reshape(-1, 1)).squeeze())
+        psd_SACed_list.append(psd_scaler.transform(psd_saced.reshape(-1, 1)).squeeze())
+
+    mse_time = [mean_squared_error(x, y) for x, y in zip(SACed_list, Clean_list)]
+    mse_psd = [mean_squared_error(psd_x, psd_y) for psd_x, psd_y in zip(psd_SACed_list, psd_Clean_list)]
+    
+    mean_mse_time = np.mean(mse_time)
+    std_mse_time = np.std(mse_time)
+    mean_mse_psd = np.mean(mse_psd)
+    std_mse_psd = np.std(mse_psd)
+
+    # erros라는 numpy 배열로 저장. 2x2
+    mse = np.array([
+        [mean_mse_time, std_mse_time],
+        [mean_mse_psd, std_mse_psd]])
+    
+    # mse = np.round(mse, 3)
+
+    print("< MSE >")
+    print(f"Time Domain MSE: {mse[0][0]} ± {mse[0][1]}")
+    print(f"Frequency Domain MSE: {mse[1][0]} ± {mse[1][1]}")
+    print(f"Time + Frequency MSE: {(mean_mse_time+mean_mse_psd)/2} ± {(std_mse_time+std_mse_psd)/2}")
+ 
+    if save_path != None and save_title != None:
+        np.save(f"{save_path}{save_title + '_MSE'}.npy", mse) # 결과를 numpy 배열로 저장
+
+
 def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, horizontal=True, small=False):
     
     """
@@ -256,7 +300,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
     plt.show()
 
     ### MAE / MSE ###
-    MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
+    MSE_std2(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
 
 
 
