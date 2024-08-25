@@ -371,6 +371,105 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
 
     # 첫 번째 figure: Time Domain Plot
     fig1, ax1 = plt.subplots(figsize=(3, 2.5))
+
+    # main timeseries plot
+    ax1.plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=0.9)
+    ax1.plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
+    ax1.plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=0.8)
+    ax1.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("Amplitude (mV)")
+    ax1.set_xlim(t[start_pts], t[end_pts])
+    ax1.set_xticks([1.0, 1.25, 1.5])
+    ax1.set_title("Time Domain Plot")
+
+    # zoom-in rectangle
+    zoom_start = start_pts + 600
+    zoom_end = start_pts + 800
+    min_val = -10
+    max_val = 5
+    rect = plt.Rectangle((t[zoom_start], min_val), t[zoom_end] - t[zoom_start], max_val - min_val, edgecolor='black', facecolor='none', linestyle='-', linewidth=1.2, transform=ax1.transData)
+    ax1.add_patch(rect)
+
+    fig1.tight_layout()
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_time_domain_plot" + ".svg")
+    plt.show()
+
+    # 두 번째 figure: Zoomed-in Time Domain Plot
+    fig_zoom, ax_zoom = plt.subplots(figsize=(3, 2.5))
+    ax_zoom.plot(t[zoom_start:zoom_end], Clean[0, zoom_start:zoom_end], color='dodgerblue', linewidth=1)
+    ax_zoom.plot(t[zoom_start:zoom_end], SACed[0, zoom_start:zoom_end], color='red', linewidth=0.8)
+    ax_zoom.plot(t[zoom_start:zoom_end], Contaminated[0, zoom_start:zoom_end], color='gray', linewidth=0.2)
+    ax_zoom.set_xlim(t[zoom_start-1], t[zoom_end])
+    ax_zoom.set_ylim(min_val-0.2, max_val+0.2)
+    ax_zoom.set_title("Zoom-in Time Domain Plot")
+    ax_zoom.set_xlabel("Time (s)")
+    ax_zoom.set_ylabel("Amplitude (mV)")
+
+    fig_zoom.tight_layout()
+    if save_path != None and save_title != None:
+        fig_zoom.savefig(save_path + save_title + "_zoom_time_domain_plot" + ".svg")
+    plt.show()
+
+    # 세 번째 figure: Frequency Domain Plot
+    fig2, ax2 = plt.subplots(figsize=(3, 2.5))
+
+    freqs, _, _, psd_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
+    _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
+
+    ax2.semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='gray', alpha = 1, linewidth=0.8)
+    ax2.semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=0.8)
+    ax2.semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=0.8)
+    ax2.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
+    ax2.set_xlabel("Frequency (Hz)")
+    ax2.set_ylabel("Log power (dB/Hz)")
+    ax2.set_xlim(freqs[1]-5, freqs[600]+5)
+    ax2.set_xticks([0, 150, 300])
+    ax2.set_title("Frequency Domain Plot")
+
+    fig2.tight_layout()
+
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_frequency_domain_plot" + ".svg")
+    plt.show()
+
+    ### MAE / MSE ###
+    MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
+
+    
+def Result_Plot_paper2(Contaminated, SACed, Clean, save_path=None, save_title=None):
+    
+    """
+    모델의 결과를 plot하고 save하는 함수
+    parameter: Contaminated, SACed_signal, Clean, save_path, save_title
+    return: None
+
+    save_path: 결과를 저장할 경로 ex) '../../../result/CNN'
+    save_title: 어떤 코드를 실행한 결과인지 명시. 저장되는 파일명의 앞부분에 해당됨 ex) CNN_IO_time_L_time
+    
+    ex) 
+    save_title + '_errors.npy'
+    save_title + '_fig.svg'
+    """
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import mean_squared_error
+
+    ### Time domain Plotting ###
+
+    t = np.linspace(0, 2, num=4000) 
+    start_time = 1.0; # [sec]
+    end_time = 1.5; # [sec]
+    fs = 2000
+    start_pts = int(start_time*fs)
+    end_pts = int(end_time*fs)
+
+    # 첫 번째 figure: Time Domain Plot
+    fig1, ax1 = plt.subplots(figsize=(3, 2.5))
     inset_axis = ax1.inset_axes((0.3, 0.2, 0.6, 0.4))
 
     # main timeseries plot
@@ -396,7 +495,8 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     inset_axis.set_ylim(min_val-0.2, max_val+0.2)
 
     fig1.tight_layout()
-    plt.savefig(save_path + save_title + "_time_domain_plot" + ".svg")
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_time_domain_plot" + ".svg")
     plt.show()
 
     # 두 번째 figure: Frequency Domain Plot
@@ -424,7 +524,6 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
 
     ### MAE / MSE ###
     MSE_std(SACed, Clean, psd_SACed, psd_Clean, save_path, save_title)
-
 
 def FFT(data, fs=2000, single_sided=True):
     
