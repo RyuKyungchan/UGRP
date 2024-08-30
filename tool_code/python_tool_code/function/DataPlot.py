@@ -19,8 +19,8 @@ def Data_Load_Plot(datapath):
     ### Plot all in one ###
 
     t = np.linspace(0, 2, num=4000) 
-    start_time = 1; # [sec]
-    end_time = 1.5; # [sec]
+    start_time = 0.75; # [sec]
+    end_time = 1.25; # [sec]
     fs = 2000
     start_pts = int(start_time*fs)
     end_pts = int(end_time*fs)
@@ -76,15 +76,15 @@ def Data_Load_Plot(datapath):
 
     # Zoom-In 
     plt.subplot(3, 2, 2)
-    plt.plot(t[start_pts : start_pts + 200], Contaminated[0][start_pts : start_pts + 200], color='gray')
+    plt.plot(t[start_pts+400 : start_pts+600], Contaminated[0][start_pts+400 : start_pts+600], color='gray')
     plt.xlabel("Time (seconds)"); plt.title('Contaminated Signal (Zoom-In)')
 
     plt.subplot(3, 2, 4)
-    plt.plot(t[start_pts : start_pts + 200], Artifact[0][start_pts : start_pts + 200], color='darkorange')
+    plt.plot(t[start_pts+400 : start_pts+600], Artifact[0][start_pts : start_pts+600], color='darkorange')
     plt.xlabel("Time (seconds)"); plt.title('Artifact Signal (Zoom-In)')
 
     plt.subplot(3, 2, 6)
-    plt.plot(t[start_pts : start_pts + 200], Clean[0][:200], color='dodgerblue')
+    plt.plot(t[start_pts+400 : start_pts+600], Clean[0][start_pts : start_pts+600], color='dodgerblue')
     plt.xlabel("Time (seconds)"); plt.title('Clean Signal (Zoom-In)')
 
     plt.tight_layout()
@@ -244,8 +244,8 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
     ### Time domain Plotting ###
 
     t = np.linspace(0, 2, num=4000) 
-    start_time = 1; # [sec]
-    end_time = 1.5; # [sec]
+    start_time = 0.75; # [sec]
+    end_time = 1.25; # [sec]
     fs = 2000
     start_pts = int(start_time*fs)
     end_pts = int(end_time*fs)
@@ -275,14 +275,14 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
     axes[0].set_title("Time Domain Plot")
 
     # zoom-in(x1) inset plot
-    inset_axis.plot(t[start_pts + 200 : start_pts + 400], Clean[0, start_pts + 200 : start_pts + 400], color='dodgerblue', linewidth=0.9)
-    inset_axis.plot(t[start_pts + 200 : start_pts + 400], SACed[0, start_pts + 200 : start_pts + 400], color='red', linewidth=0.9)
+    inset_axis.plot(t[start_pts + 400 : start_pts + 600], Clean[0, start_pts + 400 : start_pts + 600], color='dodgerblue', linewidth=0.9)
+    inset_axis.plot(t[start_pts + 400 : start_pts + 600], SACed[0, start_pts + 400 : start_pts + 600], color='red', linewidth=0.9)
     axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.8, lw=1.2)
-    inset_axis.plot(t[start_pts + 200 : start_pts + 400], Contaminated[0, start_pts + 200 : start_pts + 400], color='gray', linewidth=0.8)
+    inset_axis.plot(t[start_pts + 400 : start_pts + 600], Contaminated[0, start_pts + 400 : start_pts + 600], color='gray', linewidth=0.8)
     inset_axis.patch.set_alpha(1)
-    inset_axis.set_xlim(t[start_pts + 200-1], t[start_pts + 400])
-    min_val = min(Clean[0, start_pts + 200 : start_pts + 400].min(), SACed[0, start_pts + 200 : start_pts + 400].min())
-    max_val = max(Clean[0, start_pts + 200 : start_pts + 400].max(), SACed[0, start_pts + 200 : start_pts + 400].max())
+    inset_axis.set_xlim(t[start_pts + 400-1], t[start_pts + 600])
+    min_val = min(Clean[0, start_pts + 400 : start_pts + 600].min(), SACed[0, start_pts + 400 : start_pts + 600].min())
+    max_val = max(Clean[0, start_pts + 400 : start_pts + 600].max(), SACed[0, start_pts + 400 : start_pts + 600].max())
     inset_axis.set_ylim(min_val-0.2, max_val+0.2)
 
     ### Frequency domain Plottig ###  
@@ -413,8 +413,8 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     ### Time domain Plotting ###
 
     t = np.linspace(0, 2, num=4000) 
-    start_time = 1.0; # [sec]
-    end_time = 1.5; # [sec]
+    start_time = 0.75; # [sec]
+    end_time = 1.25; # [sec]
     fs = 2000
     start_pts = int(start_time*fs)
     end_pts = int(end_time*fs)
@@ -434,8 +434,8 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     ax1.set_title("Time Domain Plot")
 
     # zoom-in rectangle
-    zoom_start = start_pts + 600
-    zoom_end = start_pts + 800
+    zoom_start = start_pts + 400
+    zoom_end = start_pts + 600
     min_val = -10
     max_val = 7.5
     rect = plt.Rectangle((t[zoom_start], min_val), t[zoom_end] - t[zoom_start], max_val - min_val, edgecolor='black', facecolor='none', linestyle='-', linewidth=1.2, zorder=4, transform=ax1.transData)
