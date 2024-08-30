@@ -80,11 +80,11 @@ def Data_Load_Plot(datapath):
     plt.xlabel("Time (seconds)"); plt.title('Contaminated Signal (Zoom-In)')
 
     plt.subplot(3, 2, 4)
-    plt.plot(t[start_pts+400 : start_pts+600], Artifact[0][start_pts : start_pts+600], color='darkorange')
+    plt.plot(t[start_pts+400 : start_pts+600], Artifact[0][start_pts+400 : start_pts+600], color='darkorange')
     plt.xlabel("Time (seconds)"); plt.title('Artifact Signal (Zoom-In)')
 
     plt.subplot(3, 2, 6)
-    plt.plot(t[start_pts+400 : start_pts+600], Clean[0][start_pts : start_pts+600], color='dodgerblue')
+    plt.plot(t[start_pts+400 : start_pts+600], Clean[0][start_pts+400 : start_pts+600], color='dodgerblue')
     plt.xlabel("Time (seconds)"); plt.title('Clean Signal (Zoom-In)')
 
     plt.tight_layout()
