@@ -430,7 +430,7 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     ax1.set_xlabel("Time (s)")
     ax1.set_ylabel("Amplitude (mV)")
     ax1.set_xlim(t[start_pts], t[end_pts])
-    ax1.set_xticks([1.0, 1.25, 1.5])
+    ax1.set_xticks([0.75, 1, 1.25])
     ax1.set_title("Time Domain Plot")
 
     # zoom-in rectangle
