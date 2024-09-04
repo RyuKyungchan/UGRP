@@ -413,24 +413,24 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     ### Time domain Plotting ###
 
     t = np.linspace(0, 2, num=4000) 
-    start_time = 0.75; # [sec]
-    end_time = 1.25; # [sec]
+    start_time = 0; # [sec]
+    end_time = 2; # [sec]
     fs = 2000
     start_pts = int(start_time*fs)
-    end_pts = int(end_time*fs)
+    end_pts = int(end_time*fs) -1
 
     # 첫 번째 figure: Time Domain Plot
     fig1, ax1 = plt.subplots(figsize=(3, 2.5))
 
     # main timeseries plot
-    ax1.plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=0.9, zorder=1)
-    ax1.plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1, zorder=2)
-    ax1.plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=0.8, zorder=3)
+    ax1.plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=0.3, zorder=1)
+    ax1.plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='b', alpha=1, linewidth=0.4, zorder=2)
+    ax1.plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=0.2, zorder=3)
     ax1.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
     ax1.set_xlabel("Time (s)")
     ax1.set_ylabel("Amplitude (mV)")
     ax1.set_xlim(t[start_pts], t[end_pts])
-    ax1.set_xticks([0.75, 1, 1.25])
+    ax1.set_xticks([0, 0.5, 1, 1.5, 2])
     ax1.set_title("Time Domain Plot")
 
     # zoom-in rectangle
@@ -448,14 +448,16 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
 
     # 두 번째 figure: Zoomed-in Time Domain Plot
     fig_zoom, ax_zoom = plt.subplots(figsize=(3, 2.5))
-    ax_zoom.plot(t[zoom_start:zoom_end], Clean[0, zoom_start:zoom_end], color='dodgerblue', linewidth=1)
-    ax_zoom.plot(t[zoom_start:zoom_end], SACed[0, zoom_start:zoom_end], color='red', linewidth=0.8)
-    ax_zoom.plot(t[zoom_start:zoom_end], Contaminated[0, zoom_start:zoom_end], color='gray', linewidth=0.2)
+    ax_zoom.plot(t[zoom_start:zoom_end], Clean[0, zoom_start:zoom_end], label="Clean", color='b', linewidth=1)
+    ax_zoom.plot(t[zoom_start:zoom_end], SACed[0, zoom_start:zoom_end], label="SACed", color='red', linewidth=0.8)
+    ax_zoom.plot(t[zoom_start:zoom_end], Contaminated[0, zoom_start:zoom_end], label="Contaminated", color='gray', linewidth=0.5)
     ax_zoom.set_xlim(t[zoom_start-1], t[zoom_end])
     ax_zoom.set_ylim(min_val-0.5, max_val+0.5)
     ax_zoom.set_title("Zoom-in Time Domain Plot")
     ax_zoom.set_xlabel("Time (s)")
     ax_zoom.set_ylabel("Amplitude (mV)")
+    ax_zoom.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)  # 범례 추가
+
 
     fig_zoom.tight_layout()
     if save_path != None and save_title != None:
@@ -469,13 +471,13 @@ def Result_Plot_paper(Contaminated, SACed, Clean, save_path=None, save_title=Non
     _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
     _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
 
-    ax2.semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='gray', alpha = 1, linewidth=0.8)
-    ax2.semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=0.8)
-    ax2.semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=0.8)
+    ax2.semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='gray', alpha = 1, linewidth=0.5)
+    ax2.semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='b', alpha = 1, linewidth=0.5)
+    ax2.semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=0.4)
     ax2.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
     ax2.set_xlabel("Frequency (Hz)")
     ax2.set_ylabel("Log power (dB/Hz)")
-    ax2.set_xlim(freqs[1]-5, freqs[600]+5)
+    ax2.set_xlim(freqs[1], freqs[600])
     ax2.set_xticks([0, 150, 300])
     ax2.set_title("Frequency Domain Plot")
 
