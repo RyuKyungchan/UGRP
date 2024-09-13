@@ -1,0 +1,13 @@
+numpy
+scipy
+matplotlib
+pqdm
+sphinx
+numpydoc
+sphinxcontrib-bibtex
+sphinx-gallery
+pydata-sphinx-theme
+notebook
+ipykernel
+ipywidgets
+ipython
