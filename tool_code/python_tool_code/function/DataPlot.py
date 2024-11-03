@@ -781,3 +781,70 @@ def Result_Plot_previous(Contaminated, SACed, Clean):
     plt.axvline(x=130, color='black', linestyle='--',label='130 Hz', linewidth=0.7)
 
     return None
+
+
+
+
+
+
+
+
+
+
+
+def temporary_Result_Plot_paper(Contaminated, Clean, save_path=None, save_title=None):
+
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from sklearn.metrics import mean_absolute_error
+    from sklearn.metrics import mean_squared_error
+
+    ### Time domain Plotting ###
+    t = np.linspace(0, 2, num=4000) 
+    start_time = 0; # [sec]
+    end_time = 2; # [sec]
+    fs = 2000
+    start_pts = int(start_time*fs)
+    end_pts = int(end_time*fs) -1
+
+    # 첫 번째 figure: Time Domain Plot
+    fig1, ax1 = plt.subplots(figsize=(3, 2.5))
+
+    # main timeseries plot
+    ax1.plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=0.3, zorder=1)
+    ax1.plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='b', alpha=1, linewidth=0.4, zorder=2)
+    # ax1.plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=0.2, zorder=3)
+    # ax1.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("Amplitude (mV)")
+    ax1.set_xlim(t[start_pts], t[end_pts])
+    ax1.set_xticks([0, 0.5, 1, 1.5, 2])
+    ax1.set_title("Time Domain Plot")
+
+    fig1.tight_layout()
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_time_domain_plot" + ".svg")
+    plt.show()
+
+    # 세 번째 figure: Frequency Domain Plot
+    fig2, ax2 = plt.subplots(figsize=(3, 2.5))
+
+    freqs, _, _, psd_Contaminated = FFT(Contaminated, fs=2000, single_sided=True)
+    _, _, _, psd_Clean = FFT(Clean, fs=2000, single_sided=True)
+    # _, _, _, psd_SACed = FFT(SACed, fs=2000, single_sided=True)
+
+    ax2.semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='gray', alpha = 1, linewidth=0.5)
+    ax2.semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='b', alpha = 1, linewidth=0.5)
+    # ax2.semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=0.4)
+    ax2.legend(prop={'size': 3}, loc='lower left', bbox_to_anchor=(-0.3, -0.3), ncol=1)
+    ax2.set_xlabel("Frequency (Hz)")
+    ax2.set_ylabel("Log power (dB/Hz)")
+    ax2.set_xlim(freqs[1], freqs[600])
+    ax2.set_xticks([0, 150, 300])
+    ax2.set_title("Frequency Domain Plot")
+
+    fig2.tight_layout()
+
+    if save_path != None and save_title != None:
+        plt.savefig(save_path + save_title + "_frequency_domain_plot" + ".svg")
+    plt.show()
