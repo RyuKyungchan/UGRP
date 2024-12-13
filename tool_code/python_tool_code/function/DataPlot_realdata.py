@@ -266,13 +266,13 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
             inset_axis = axes[0].inset_axes((0.11, 0.27, 0.5, 0.35))
 
     # main timeseries plot
-    axes[0].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=1)
-    axes[0].plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
-    axes[0].plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=1)
-    axes[0].legend(prop={'size': 8}, loc='lower left')
-    axes[0].set_xlabel("Time (s)"); axes[0].set_ylabel("Amplitude (mV)"); 
-    axes[0].set_xlim(t[start_pts-20], t[end_pts+20])
-    axes[0].set_title("Time Domain Plot")
+    axes[1].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=1)
+    axes[1].plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
+    axes[1].plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=1)
+    axes[1].legend(prop={'size': 8}, loc='lower left')
+    axes[1].set_xlabel("Time (s)"); axes[0].set_ylabel("Amplitude (mV)"); 
+    axes[1].set_xlim(t[start_pts-20], t[end_pts+20])
+    axes[1].set_title("Time Domain Plot")
 
     # zoom-in(x1) inset plot
     inset_axis.plot(t[start_pts + 400 : start_pts + 600], Clean[0, start_pts + 400 : start_pts + 600], color='dodgerblue', linewidth=0.9)
