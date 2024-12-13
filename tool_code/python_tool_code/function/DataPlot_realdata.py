@@ -256,7 +256,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
             inset_axis = axes[0].inset_axes((0.06, 0.4, 0.3, 0.2))
         else: # large
             fig, axes = plt.subplots(1, 2, figsize=(12, 5))
-            inset_axis = axes[0].inset_axes((0.11, 0.27, 0.5, 0.35))
+            inset_axis = axes[0].inset_axes((0.3, 0.2, 0.5, 0.35))
     else: # vertical
         if small:
             fig, axes = plt.subplots(2, 1, figsize=(3, 5))
@@ -277,13 +277,13 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
     # zoom-in(x1) inset plot
     inset_axis.plot(t[start_pts + 5696 : start_pts + 6510], Clean[0, start_pts + 5696 : start_pts + 6510], color='dodgerblue', linewidth=0.9)
     inset_axis.plot(t[start_pts + 5696 : start_pts + 6510], SACed[0, start_pts + 5696 : start_pts + 6510], color='red', linewidth=0.9)
-    axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.8, lw=1.2)
     inset_axis.plot(t[start_pts + 5696 : start_pts + 6510], Contaminated[0, start_pts + 5696 : start_pts + 6510], color='gray', linewidth=0.8)
-    inset_axis.patch.set_alpha(1)
     inset_axis.set_xlim(t[start_pts + 5696-1], t[start_pts + 6510])
     min_val = min(Clean[0, start_pts + 5696 : start_pts + 6510].min(), SACed[0, start_pts + 5696 : start_pts + 6510].min())
     max_val = max(Clean[0, start_pts + 5696 : start_pts + 6510].max(), SACed[0, start_pts + 5696 : start_pts + 6510].max())
-    inset_axis.set_ylim(min_val+0.001, max_val-0.007)
+    inset_axis.set_ylim(-0.001, 0.001)
+    axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.8, lw=1.2)
+    inset_axis.patch.set_alpha(1)
 
     ### Frequency domain Plottig ###  
 
