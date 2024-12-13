@@ -243,7 +243,7 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
 
     ### Time domain Plotting ###
 
-    t = np.linspace(0, 2, num=4000) 
+    t = np.linspace(0, 2, num=7324200) 
     start_time = 0.75; # [sec]
     end_time = 1.25; # [sec]
     fs = 24414
@@ -266,24 +266,24 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
             inset_axis = axes[0].inset_axes((0.11, 0.27, 0.5, 0.35))
 
     # main timeseries plot
-    axes[1].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=1)
-    axes[1].plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
-    axes[1].plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=1)
-    axes[1].legend(prop={'size': 8}, loc='lower left')
-    axes[1].set_xlabel("Time (s)"); axes[0].set_ylabel("Amplitude (mV)"); 
-    axes[1].set_xlim(t[start_pts-20], t[end_pts+20])
-    axes[1].set_title("Time Domain Plot")
+    axes[0].plot(t[start_pts:end_pts], Contaminated[0, start_pts:end_pts], label="Contaminated", color="gray", alpha=1, linewidth=1)
+    axes[0].plot(t[start_pts:end_pts], Clean[0, start_pts:end_pts], label="Clean", color='dodgerblue', alpha=1, linewidth=1)
+    axes[0].plot(t[start_pts:end_pts], SACed[0, start_pts:end_pts], label="SACed", color='red', alpha=1, linewidth=1)
+    axes[0].legend(prop={'size': 8}, loc='lower left')
+    axes[0].set_xlabel("Time (s)"); axes[0].set_ylabel("Amplitude (mV)"); 
+    axes[0].set_xlim(t[start_pts-20], t[end_pts+20])
+    axes[0].set_title("Time Domain Plot")
 
     # zoom-in(x1) inset plot
-    inset_axis.plot(t[start_pts + 400 : start_pts + 600], Clean[0, start_pts + 400 : start_pts + 600], color='dodgerblue', linewidth=0.9)
-    inset_axis.plot(t[start_pts + 400 : start_pts + 600], SACed[0, start_pts + 400 : start_pts + 600], color='red', linewidth=0.9)
+    inset_axis.plot(t[start_pts + 5696 : start_pts + 6510], Clean[0, start_pts + 5696 : start_pts + 6510], color='dodgerblue', linewidth=0.9)
+    inset_axis.plot(t[start_pts + 5696 : start_pts + 6510], SACed[0, start_pts + 5696 : start_pts + 6510], color='red', linewidth=0.9)
     axes[0].indicate_inset_zoom(inset_axis, edgecolor="black", alpha=0.8, lw=1.2)
-    inset_axis.plot(t[start_pts + 400 : start_pts + 600], Contaminated[0, start_pts + 400 : start_pts + 600], color='gray', linewidth=0.8)
+    inset_axis.plot(t[start_pts + 5696 : start_pts + 6510], Contaminated[0, start_pts + 5696 : start_pts + 6510], color='gray', linewidth=0.8)
     inset_axis.patch.set_alpha(1)
-    inset_axis.set_xlim(t[start_pts + 400-1], t[start_pts + 600])
-    min_val = min(Clean[0, start_pts + 400 : start_pts + 600].min(), SACed[0, start_pts + 400 : start_pts + 600].min())
-    max_val = max(Clean[0, start_pts + 400 : start_pts + 600].max(), SACed[0, start_pts + 400 : start_pts + 600].max())
-    inset_axis.set_ylim(min_val-0.2, max_val+0.2)
+    inset_axis.set_xlim(t[start_pts + 5696-1], t[start_pts + 6510])
+    min_val = min(Clean[0, start_pts + 5696 : start_pts + 6510].min(), SACed[0, start_pts + 5696 : start_pts + 6510].min())
+    max_val = max(Clean[0, start_pts + 5696 : start_pts + 6510].max(), SACed[0, start_pts + 5696 : start_pts + 6510].max())
+    inset_axis.set_ylim(min_val+0.001, max_val-0.007)
 
     ### Frequency domain Plottig ###  
 
@@ -291,12 +291,12 @@ def Result_Plot(Contaminated, SACed, Clean, save_path=None, save_title=None, hor
     _, _, _, psd_Clean = FFT(Clean, fs=24414, single_sided=True)
     _, _, _, psd_SACed = FFT(SACed, fs=24414, single_sided=True)
 
-    axes[1].semilogy(freqs[1:600], psd_Contaminated[0, 1:600], label="Contaminated", color='gray', alpha = 1, linewidth=1)
-    axes[1].semilogy(freqs[1:600], psd_Clean[0, 1:600], label="Clean", color='dodgerblue', alpha = 1, linewidth=1)
-    axes[1].semilogy(freqs[1:600], psd_SACed[0, 1:600], label="SACed", color='red', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:60000], psd_Contaminated[0, 1:60000], label="Contaminated", color='gray', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:60000], psd_Clean[0, 1:60000], label="Clean", color='dodgerblue', alpha = 1, linewidth=1)
+    axes[1].semilogy(freqs[1:60000], psd_SACed[0, 1:60000], label="SACed", color='red', alpha = 1, linewidth=1)
     axes[1].legend(prop={'size': 8}, loc='lower left')
     axes[1].set_xlabel("Frequency (Hz)"); axes[1].set_ylabel("Log power (dB/Hz)")
-    axes[1].set_xlim(freqs[1]-5, freqs[600]+5)
+    axes[1].set_xlim(freqs[1]-5, freqs[60000]+5)
     axes[1].set_title("Frequency Domain Plot")
 
     fig.tight_layout()
